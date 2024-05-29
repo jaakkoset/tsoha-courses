@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, redirect, request
 import users
+import courses
 
 
 @app.route("/")
@@ -32,10 +33,9 @@ def register():
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         role = request.form["role"]
-        if len(username) > 30:
+        if len(username) == 0 or len(username) > 30:
             return render_template(
-                "error.html",
-                message="Käyttäjätunnuksen tulee olla enintään 30 merkkiä pitkä",
+                "error.html", message="Käyttäjätunnuksen tulee olla 1-30 merkkiä pitkä"
             )
         if len(password1) < 2 or len(password1) > 30:
             return render_template(
@@ -50,3 +50,24 @@ def register():
         if users.register(username, password1, role):
             return redirect("/")
         return render_template("error.html", message="Rekisteröinti ei onnistunut")
+
+
+@app.route("/create", methods=["GET", "POST"])
+def create():
+    users.is_teacher()
+
+    if request.method == "GET":
+        return render_template("create.html")
+
+    if request.method == "POST":
+        course_name = request.form["course_name"]
+        if len(course_name) < 1 or len(course_name) > 30:
+            return render_template(
+                "error.html", message="Kurssin nimen tulee olla 1-30 merkkiä pitkä"
+            )
+        if courses.name_reserved(course_name):
+            return render_template("error.html", message="Kurssin nimi on varattu")
+        id = users.user_id()
+        if courses.create_course(course_name, id):
+            return redirect("/")
+        return render_template("error.html", message="Kurssin luonti epäonnistui")

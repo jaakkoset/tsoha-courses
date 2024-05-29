@@ -1,5 +1,5 @@
 from app import db
-from flask import session
+from flask import abort, session
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.sql import text
 
@@ -21,6 +21,7 @@ def login(name, password):
 def logout():
     del session["user_id"]
     del session["username"]
+    del session["role"]
 
 
 def register(name, password, role):
@@ -34,19 +35,23 @@ def register(name, password, role):
         )
         db.session.commit()
     except:
-        print("users.register() False")
         return False
     return login(name, password)
+
+
+def username_reserved(username):
+    sql = "SELECT username FROM users WHERE username=:username"
+    query = db.session.execute(text(sql), {"username": username})
+    result = query.fetchone()
+    if result:
+        return True
+    return False
 
 
 def user_id():
     return session.get("user_id", 0)
 
 
-def username_reserved(username):
-    sql = "SELECT username FROM users WHERE username=(:username)"
-    query = db.session.execute(text(sql), {"username": username})
-    result = query.fetchone()
-    if result:
-        return True
-    return False
+def is_teacher():
+    if session.get("role") is not 1:
+        abort(403)

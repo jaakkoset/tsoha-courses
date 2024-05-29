@@ -53,5 +53,10 @@ def user_id():
 
 
 def is_teacher():
-    if session.get("role") is not 1:
+    if session.get("role") != 1:
+        abort(403)
+
+
+def logged_in():
+    if not session.get("user_id", 0):
         abort(403)

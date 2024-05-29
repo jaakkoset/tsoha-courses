@@ -29,3 +29,15 @@ def name_reserved(course_name):
     if user:
         return True
     return False
+
+
+def list_courses():
+    sql = "SELECT name FROM courses"
+    result = db.session.execute(text(sql))
+    course_list = result.fetchall()
+    course_list = [c[0] for c in course_list]
+    return course_list
+
+
+def course_owner(user_id, course_id):
+    pass

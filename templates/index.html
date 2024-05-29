@@ -4,11 +4,13 @@
 {% if session.user_id %}
 
 <p>Olet kirjautunut nimellä {{ session.username }}</p>
-<p><a href="/courses">Omat kurssit</a></p>
-<p><a href="/browse">Selaa kursseja</a></p>
+<p><a href="/my_courses">Omat kurssit</a></p>
+<p><a href="/courses">Selaa kursseja</a></p>
 
 {% if session.role == 1 %}
-<p><h3>Opettaja toiminnot</h3></p>
+<p>
+<h3>Opettajan toiminnot</h3>
+</p>
 <p><a href="/create">Luo uusi kurssi</a></p>
 {% endif %}
 
@@ -16,14 +18,17 @@
 
 <h3>Kirjaudu sisään</h3>
 <form action="/login" method="POST">
-<p>Tunnus:
-<br>
-<input type="text" name="username"></p>
-<p>Salasana:
-<br>
-<input type="password" name="password"></p>
-<p></p><input type="submit" value="Kirjaudu">
-</form></p>
+    <p>Tunnus:
+        <br>
+        <input type="text" name="username">
+    </p>
+    <p>Salasana:
+        <br>
+        <input type="password" name="password">
+    </p>
+    <p></p><input type="submit" value="Kirjaudu">
+</form>
+</p>
 <a href="/register">Luo uusi käyttäjä</a>
 
 {% endif %}

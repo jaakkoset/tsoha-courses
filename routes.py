@@ -71,3 +71,16 @@ def create():
         if courses.create_course(course_name, id):
             return redirect("/")
         return render_template("error.html", message="Kurssin luonti epäonnistui")
+
+
+@app.route("/courses", methods=["GET"])
+def courses_route():
+    users.logged_in()
+    course_list = courses.list_courses()
+    return render_template("courses.html", course_list=course_list)
+
+
+@app.route("/courses/<name>", methods=["GET"])
+def course(name):
+    users.logged_in()
+    return render_template("one_course.html", course_name=name)

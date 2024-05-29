@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<ul>
+  {% for course in course_list %}
+  <li><a href="/courses/{{ course }}">{{ course }}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

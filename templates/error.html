@@ -1,4 +1,5 @@
-Virhe: {{ message }}
-<p>
-  <a href="/">Etusivu</a>
-</p>
+{% extends "layout.html" %} {% block content %}
+
+<p>Virhe: {{ message }}</p>
+
+{% endblock %}

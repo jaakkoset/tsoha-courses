@@ -5,18 +5,17 @@ from sqlalchemy.sql import text
 
 
 def login(name, password):
-    sql = "SELECT password, id FROM users WHERE username=:name"
+    sql = "SELECT id, password, role FROM users WHERE username=:name"
     result = db.session.execute(text(sql), {"name": name})
     user = result.fetchone()
     if not user:
         return False
-    else:
-        if check_password_hash(user[0], password):
-            session["user_id"] = user[1]
-            session["username"] = name
-            return True
-        else:
-            return False
+    if check_password_hash(user[1], password):
+        session["user_id"] = user[0]
+        session["username"] = name
+        session["role"] = user[2]
+        return True
+    return False
 
 
 def logout():

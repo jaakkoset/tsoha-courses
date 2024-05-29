@@ -14,8 +14,7 @@ def login():
     password = request.form["password"]
     if users.login(username, password):
         return redirect("/")
-    else:
-        return render_template("error.html", message="Väärä tunnus tai salasana")
+    return render_template("error.html", message="Väärä tunnus tai salasana")
 
 
 @app.route("/logout")
@@ -32,14 +31,22 @@ def register():
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
+        role = request.form["role"]
+        if len(username) > 30:
+            return render_template(
+                "error.html",
+                message="Käyttäjätunnuksen tulee olla enintään 30 merkkiä pitkä",
+            )
+        if len(password1) < 2 or len(password1) > 30:
+            return render_template(
+                "error.html", message="Salasanan tulee olla 8-30 merkkiä pitkä"
+            )
         if users.username_reserved(username):
             return render_template("error.html", message="Käyttäjätunnus on varattu")
         if password1 != password2:
             return render_template("error.html", message="Salasanat eroavat")
-        role = request.form["role"]
         if role != "0" and role != "1":
             return render_template("error.html", message="Tuntematon käyttäjärooli")
         if users.register(username, password1, role):
             return redirect("/")
-        else:
-            return render_template("error.html", message="Rekisteröinti ei onnistunut")
+        return render_template("error.html", message="Rekisteröinti ei onnistunut")

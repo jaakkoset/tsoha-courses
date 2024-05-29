@@ -1,6 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <title>Tehtäväsovellus</title>
 <h1>Tehtäväsovellus</h1>
 <a href="/">Etusivu</a>
-<hr>
+{% if session.user_id %}
+<a href="/logout">Kirjaudu ulos</a>
+{% endif %}
+<hr />
 {% block content %}{% endblock %}

@@ -1,6 +1,19 @@
 {% extends "layout.html" %}
-{% block title %}Etusivu{% endblock %}
 {% block content %}
-<h2>Etusivu</h2>
-Tervetuloa!
+{% if session.user_id %}
+<p>Olet kirjautunut nimellä {{ session.username }}</p>
+{% else %}
+<h3>Kirjaudu sisään</h3>
+<form action="/login" method="POST">
+<p>Tunnus:
+<br>
+<input type="text" name="username"></p>
+<p>Salasana:
+<br>
+<input type="password" name="password"></p>
+<p></p><input type="submit" value="Kirjaudu">
+</form></p>
+<a href="/register">Luo uusi käyttäjä</a>
+{% endif %}
+
 {% endblock %}

@@ -97,7 +97,7 @@ def course_page(course_name):
     else:
         status = "visitor"
     open = courses.course_open(course_name)
-    if open == 1 or status == "owner":
+    if open == 1 or status == "owner" or status == "student":
         return render_template(
             "course_page.html", course_name=course_name, status=status, open=open
         )

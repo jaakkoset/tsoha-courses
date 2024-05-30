@@ -148,6 +148,24 @@ def course_open(course_name):
     sql = """SELECT course_open FROM courses WHERE name=:course_name"""
     result = db.session.execute(text(sql), {"course_name": course_name})
     open = result.fetchone()[0]
-    if open in (0, 2):
+    return open
+
+
+def update_course(course_name, update_value):
+    try:
+        sql = """
+                    UPDATE courses 
+                    SET course_open=:update_value
+                    WHERE name=:course_name"""
+        db.session.execute(
+            text(sql),
+            {
+                "course_name": course_name,
+                "update_value": update_value,
+            },
+        )
+        db.session.commit()
+    except:
+        print("courses.update_course palauttaa False")
         return False
     return True

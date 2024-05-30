@@ -2,8 +2,7 @@
 {% block content %}
 
 <h3>Kaikki kurssit</h3>
-<p>Yhteensä {{ course_count }} kurssia</p>
-<p><a href="/my_courses">Omat kurssit</a></p>
+<p>Yhteensä {{ course_count }} kurssia | <a href="/my_courses">Katso omat kurssit</a></p>
 <ol>
   {% for course in course_list %}
   <li><a href="/courses/{{ course.0 }}">{{ course.0 }}, <i>{{ course.1 }}</i></a></li>

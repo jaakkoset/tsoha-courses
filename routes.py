@@ -96,9 +96,10 @@ def course_page(course_name):
         status = "student"
     else:
         status = "visitor"
-    if courses.course_open(course_name) or status == "owner":
+    open = courses.course_open(course_name)
+    if open == 1 or status == "owner":
         return render_template(
-            "course_page.html", course_name=course_name, status=status
+            "course_page.html", course_name=course_name, status=status, open=open
         )
     return abort(404)
 
@@ -120,11 +121,29 @@ def my_courses():
 @app.route("/enroll/<course_name>", methods=["GET"])
 def enroll(course_name):
     courses.course_exists(course_name)
-    if courses.course_open(course_name):
+    if courses.course_open(course_name) == 1:
         users.required_role(0)
         user_id = users.user_id()
         if courses.is_enrolled(course_name, user_id):
-            render_template("error.html", messages="Olet jo liittynyt kurssille")
+            render_template("error.html", message="Olet jo liittynyt kurssille")
         if courses.enroll(course_name, user_id):
             return redirect("/")
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
+
+
+@app.route("/courses/<course_name>/update_course", methods=["POST"])
+def update_course(course_name):
+    update_value = request.form["update_value"]
+    print()
+    print(course_name)
+    print(update_value)
+    print()
+    courses.course_exists(course_name)
+    user_id = users.user_id()
+    if courses.course_owner(course_name, user_id):
+        if courses.update_course(course_name, update_value):
+            return redirect("/courses/" + course_name)
+        return render_template(
+            "error.html", message="Kurssin tilan päivitys epäonnistui"
+        )
+    return abort(403)

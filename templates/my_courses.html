@@ -13,14 +13,16 @@
 <ol>
     {% for name, open in course_list %}
     <li>
-        <a href="/courses/{{ name }}">{{ name }}</a>
-        <br>{% if open == 0 %}
-        Kurssia ei ole aloitettu
-        {% elif open == 1 %}
-        Kurssi on käynnissä
-        {% elif open == 3 %}
-        Kurssi on suljettu
-        {% endif %}</br>
+        <p>
+            <a href="/courses/{{ name }}">{{ name }}</a>
+            {% if open == 0 %}
+            <br>Kurssia ei ole aloitettu
+            {% elif open == 1 %}
+            <br>Kurssi on käynnissä
+            {% elif open == 3 %}
+            <br>Kurssi on suljettu
+            {% endif %}
+        </p>
     </li>
     {% endfor %}
 </ol>

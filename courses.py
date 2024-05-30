@@ -68,8 +68,6 @@ def my_courses_student(user_id):
             ORDER BY course_name"""
     result = db.session.execute(text(sql), {"user_id": user_id})
     courses = result.fetchall()
-    print()
-    print("courses:", courses)
     return courses
 
 
@@ -78,13 +76,10 @@ def enroll(course_name, user_id):
     result = db.session.execute(text(sql), {"course_name": course_name})
     course_id = result.fetchone()[0]
     try:
-        print()
-        print("1")
         sql = """INSERT INTO enrollment 
                     (course_id, student_id) 
                 VALUES 
                     (:course_id,:student_id)"""
-        print("2")
         db.session.execute(
             text(sql),
             {
@@ -92,14 +87,8 @@ def enroll(course_name, user_id):
                 "student_id": user_id,
             },
         )
-        print("3")
         db.session.commit()
-        print("4")
-        print()
     except:
-        print()
-        print("Palauttaa False")
-        print()
         return False
     return True
 

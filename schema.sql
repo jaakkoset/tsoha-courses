@@ -11,7 +11,7 @@ CREATE TABLE users
 -- course_open is 0 before the course has been started. During this time teachers can modify questions.
 -- course_open is 1 when course is open. During this time stundets can enroll on the courses,
 -- but teachers cannot anymore modify questions.
--- course_open is 3 when the course is over. Enrollment and modifications are not possible anymore,
+-- course_open is 2 when the course is over. Enrollment and modifications are not possible anymore,
 -- but statistics can be viewed.
 -- visible is 1 normally and 0 when the course is deleted.
 CREATE TABLE courses

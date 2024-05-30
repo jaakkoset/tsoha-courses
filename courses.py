@@ -39,6 +39,7 @@ def all_courses():
                 name, 
                 (SELECT username FROM users WHERE id=C.teacher_id) 
             FROM courses C 
+            WHERE course_open=1
             ORDER BY name"""
     result = db.session.execute(text(sql))
     courses = result.fetchall()
@@ -141,3 +142,12 @@ def course_exists(course_name):
     enrolled = result.fetchone()
     if not enrolled:
         abort(404)
+
+
+def course_open(course_name):
+    sql = """SELECT course_open FROM courses WHERE name=:course_name"""
+    result = db.session.execute(text(sql), {"course_name": course_name})
+    open = result.fetchone()[0]
+    if open in (0, 2):
+        return False
+    return True

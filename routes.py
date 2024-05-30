@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, abort
 import users
 import courses
 
@@ -96,7 +96,11 @@ def course_page(course_name):
         status = "student"
     else:
         status = "visitor"
-    return render_template("course_page.html", course_name=course_name, status=status)
+    if courses.course_open(course_name) or status == "owner":
+        return render_template(
+            "course_page.html", course_name=course_name, status=status
+        )
+    return abort(404)
 
 
 @app.route("/my_courses", methods=["GET"])
@@ -116,10 +120,11 @@ def my_courses():
 @app.route("/enroll/<course_name>", methods=["GET"])
 def enroll(course_name):
     courses.course_exists(course_name)
-    users.required_role(0)
-    user_id = users.user_id()
-    if courses.is_enrolled(course_name, user_id):
-        render_template("error.html", messages="Olet jo liittynyt kurssille")
-    if courses.enroll(course_name, user_id):
-        return redirect("/")
+    if courses.course_open(course_name):
+        users.required_role(0)
+        user_id = users.user_id()
+        if courses.is_enrolled(course_name, user_id):
+            render_template("error.html", messages="Olet jo liittynyt kurssille")
+        if courses.enroll(course_name, user_id):
+            return redirect("/")
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")

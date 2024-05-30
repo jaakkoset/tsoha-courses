@@ -20,7 +20,8 @@ CREATE TABLE courses
     name TEXT,
     teacher_id INTEGER REFERENCES users,
     course_open INTEGER,
-    visible INTEGER
+    visible INTEGER,
+    description TEXT
 );
 
 -- This table tells the courses each student has enrolled.

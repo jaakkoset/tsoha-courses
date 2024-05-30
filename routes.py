@@ -115,8 +115,11 @@ def my_courses():
 
 @app.route("/enroll/<course_name>", methods=["GET"])
 def enroll(course_name):
+    courses.course_exists(course_name)
     users.required_role(0)
     user_id = users.user_id()
     if courses.is_enrolled(course_name, user_id):
         render_template("error.html", messages="Olet jo liittynyt kurssille")
-    courses.enroll(course_name, user_id)
+    if courses.enroll(course_name, user_id):
+        return redirect("/")
+    return render_template("error.html", message="Kurssille liittyminen epäonnistui")

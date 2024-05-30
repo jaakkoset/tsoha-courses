@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<h3>Omat kurssit</h3>
+<p>Yhteensä {{ course_count }} kurssia</p>
+
 {% if session.role == 1 %}
 
-<h3>Omat kurssit</h3>
+<p>Opettajan näkymä</p>
 
-<p>Yhteensä {{ course_count }} kurssia</p>
+
 <p><a href="/courses">Kaikki kurssit</a></p>
 <ol>
     {% for name, open in course_list %}
@@ -24,7 +27,19 @@
 
 {% elif session.role == 0 %}
 
-Oppilaan näkymä
+<p>Oppilaan näkymä</p>
+
+<p><a href="/courses">Kaikki kurssit</a></p>
+<ol>
+    {% for name, open in course_list %}
+    <li>
+        <a href="/courses/{{ name }}">{{ name }}</a>
+        <br>{% if open == 3 %}
+        Kurssi on suljettu
+        {% endif %}</br>
+    </li>
+    {% endfor %}
+</ol>
 
 {% endif %}
 

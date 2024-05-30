@@ -102,11 +102,11 @@ def course_page(course_name):
 @app.route("/my_courses", methods=["GET"])
 def my_courses():
     users.logged_in()
+    user_id = users.user_id()
     if users.is_teacher():
-        teacher_id = users.user_id()
-        course_list = courses.my_courses_teacher(teacher_id)
-    if users.is_student():
-        course_list = courses.my_courses_student()
+        course_list = courses.my_courses_teacher(user_id)
+    elif users.is_student():
+        course_list = courses.my_courses_student(user_id)
     course_count = len(course_list)
     return render_template(
         "my_courses.html", course_list=course_list, course_count=course_count

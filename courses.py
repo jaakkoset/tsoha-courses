@@ -45,21 +45,32 @@ def all_courses():
     return courses
 
 
-def my_courses_teacher(teacher_id):
+def my_courses_teacher(user_id):
     sql = """
             SELECT 
                 name, 
                 course_open
             FROM courses
-            WHERE teacher_id=:teacher_id AND visible=1
+            WHERE teacher_id=:user_id AND visible=1
             ORDER BY name"""
-    result = db.session.execute(text(sql), {"teacher_id": teacher_id})
+    result = db.session.execute(text(sql), {"user_id": user_id})
     courses = result.fetchall()
     return courses
 
 
-def my_courses_student():
-    pass
+def my_courses_student(user_id):
+    sql = """
+            SELECT 
+                (SELECT name FROM courses WHERE id=E.course_id) course_name,
+                (SELECT course_open FROM courses WHERE id=E.course_id)
+            FROM enrollment E
+            WHERE student_id=:user_id
+            ORDER BY course_name"""
+    result = db.session.execute(text(sql), {"user_id": user_id})
+    courses = result.fetchall()
+    print()
+    print("courses:", courses)
+    return courses
 
 
 def enroll(course_name, student_id):

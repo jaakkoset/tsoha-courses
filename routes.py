@@ -77,7 +77,10 @@ def create():
 def courses_route():
     users.logged_in()
     course_list = courses.list_courses()
-    return render_template("courses.html", course_list=course_list)
+    number_of_courses = len(course_list)
+    return render_template(
+        "courses.html", course_list=course_list, number_of_courses=number_of_courses
+    )
 
 
 @app.route("/courses/<name>", methods=["GET"])

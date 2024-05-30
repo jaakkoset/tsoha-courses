@@ -7,11 +7,11 @@ CREATE TABLE users
     role INTEGER
 );
 
--- This table contains all the courses. Courses can only be made by teachers.
+-- This table contains all courses. Courses can only be made by teachers.
 -- started is 1 after the course has begun and 0 before that.
--- After a course has bee started the teacher cannot modify the questions.
+-- After a course has been started the teacher cannot modify the questions.
 -- course_open is 1 when the course is open and 0 when the course is closed.
--- When course is closed enrollment is not possible and exercises cannot be made.
+-- When the course is closed enrollment is not possible and exercises cannot be made.
 -- visible is 1 normally and 0 when the course is deleted.
 CREATE TABLE courses
 (

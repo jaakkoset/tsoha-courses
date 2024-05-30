@@ -32,11 +32,15 @@ def name_reserved(course_name):
 
 
 def list_courses():
-    sql = "SELECT name FROM courses"
+    sql = """
+            SELECT 
+                name, 
+                (SELECT username FROM users WHERE id=C.teacher_id) 
+            FROM courses C 
+            ORDER BY name"""
     result = db.session.execute(text(sql))
-    course_list = result.fetchall()
-    course_list = [c[0] for c in course_list]
-    return course_list
+    list = result.fetchall()
+    return list
 
 
 def course_owner(user_id, course_id):

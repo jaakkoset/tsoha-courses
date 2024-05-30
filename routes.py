@@ -83,10 +83,20 @@ def all_courses():
     )
 
 
-@app.route("/courses/<name>", methods=["GET"])
-def course(name):
+@app.route("/courses/<course_name>", methods=["GET"])
+def course_page(course_name):
+    courses.course_exists(course_name)
     users.logged_in()
-    return render_template("one_course.html", course_name=name)
+    user_id = users.user_id()
+    if courses.course_owner(course_name, user_id):
+        status = "owner"
+    elif users.is_teacher():
+        status = "teacher"
+    elif courses.is_enrolled(course_name, user_id):
+        status = "student"
+    else:
+        status = "visitor"
+    return render_template("course_page.html", course_name=course_name, status=status)
 
 
 @app.route("/my_courses", methods=["GET"])
@@ -101,3 +111,12 @@ def my_courses():
     return render_template(
         "my_courses.html", course_list=course_list, course_count=course_count
     )
+
+
+@app.route("/enroll/<course_name>", methods=["GET"])
+def enroll(course_name):
+    users.required_role(0)
+    user_id = users.user_id()
+    if courses.is_enrolled(course_name, user_id):
+        render_template("error.html", messages="Olet jo liittynyt kurssille")
+    courses.enroll(course_name, user_id)

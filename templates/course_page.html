@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<p>Kurssi {{ course_name }}</p>
+
+{% if status == "owner" %}
+<p>Olet kurssin omistaja</p>
+
+{% elif status == "teacher" %}
+<p>Opettajat eivät voi liittyä muiden kursseille</p>
+
+{% elif status == "student" %}
+<p>Olet liittynyt tälle kurssille</p>
+
+{% elif status == "visitor" %}
+<p><a href="/enroll/{{ course_name }}">Liity kurssille</a></p>
+
+{% endif %}
+
+{% endblock %}

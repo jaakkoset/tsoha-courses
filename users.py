@@ -49,7 +49,7 @@ def username_reserved(username):
 
 
 def user_id():
-    return session.get("user_id", 0)
+    return session.get("user_id")
 
 
 def is_teacher():
@@ -70,5 +70,5 @@ def required_role(role):
 
 
 def logged_in():
-    if not session.get("user_id", 0):
+    if not session.get("user_id"):
         abort(403)

@@ -8,19 +8,27 @@ CREATE TABLE users
 );
 
 -- This table contains all courses. Courses can only be made by teachers.
--- started is 1 after the course has begun and 0 before that.
--- After a course has been started the teacher cannot modify the questions.
--- course_open is 1 when the course is open and 0 when the course is closed.
--- When the course is closed enrollment is not possible and exercises cannot be made.
+-- course_open is 0 before the course has been started. During this time teachers can modify questions.
+-- course_open is 1 when course is open. During this time stundets can enroll on the courses,
+-- but teachers cannot anymore modify questions.
+-- course_open is 3 when the course is over. Enrollment and modifications are not possible anymore,
+-- but statistics can be viewed.
 -- visible is 1 normally and 0 when the course is deleted.
 CREATE TABLE courses
 (
     id SERIAL PRIMARY KEY,
     name TEXT,
     teacher_id INTEGER REFERENCES users,
-    started INTEGER,
     course_open INTEGER,
     visible INTEGER
+);
+
+-- This table tells the courses each student has enrolled.
+CREATE TABLE enrollment
+(
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER REFERENCES courses,
+    student_id INTEGER REFERENCES users
 );
 
 -- Contains all exercises. Each exercise is associated with one course.

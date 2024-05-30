@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if session.role == 1 %}
+
+<h3>Omat kurssit</h3>
+
+<p>Yhteensä {{ course_count }} kurssia</p>
+<p><a href="/courses">Kaikki kurssit</a></p>
+<ol>
+    {% for name, open in course_list %}
+    <li>
+        <a href="/courses/{{ name }}">{{ name }}</a>
+        <br>{% if open == 0 %}
+        Kurssia ei ole aloitettu
+        {% elif open == 1 %}
+        Kurssi on käynnissä
+        {% elif open == 3 %}
+        Kurssi on suljettu
+        {% endif %}</br>
+    </li>
+    {% endfor %}
+</ol>
+
+{% endif %}
+
+
+{% endblock %}

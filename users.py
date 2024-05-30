@@ -53,7 +53,19 @@ def user_id():
 
 
 def is_teacher():
-    if session.get("role") != 1:
+    if session.get("role") == 1:
+        return True
+    return False
+
+
+def is_student():
+    if session.get("role") == 0:
+        return True
+    return False
+
+
+def required_role(role):
+    if session.get("role") != role:
         abort(403)
 
 

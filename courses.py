@@ -5,13 +5,15 @@ from sqlalchemy.sql import text
 
 def create_course(course_name, id):
     try:
-        sql = "INSERT INTO courses (name, teacher_id, started, course_open, visible) VALUES (:name,:techer_id,:started,:course_open,:visible)"
+        sql = """INSERT INTO courses 
+                    (name, teacher_id, course_open, visible) 
+                VALUES 
+                    (:name,:teacher_id,:course_open,:visible)"""
         db.session.execute(
             text(sql),
             {
                 "name": course_name,
-                "techer_id": id,
-                "started": 0,
+                "teacher_id": id,
                 "course_open": 0,
                 "visible": 1,
             },
@@ -31,7 +33,7 @@ def name_reserved(course_name):
     return False
 
 
-def list_courses():
+def all_courses():
     sql = """
             SELECT 
                 name, 
@@ -39,8 +41,25 @@ def list_courses():
             FROM courses C 
             ORDER BY name"""
     result = db.session.execute(text(sql))
-    list = result.fetchall()
-    return list
+    courses = result.fetchall()
+    return courses
+
+
+def my_courses_teacher(teacher_id):
+    sql = """
+            SELECT 
+                name, 
+                course_open
+            FROM courses
+            WHERE teacher_id=:teacher_id AND visible=1
+            ORDER BY name"""
+    result = db.session.execute(text(sql), {"teacher_id": teacher_id})
+    courses = result.fetchall()
+    return courses
+
+
+def my_courses_student():
+    pass
 
 
 def course_owner(user_id, course_id):

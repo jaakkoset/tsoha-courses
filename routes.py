@@ -54,7 +54,7 @@ def register():
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
-    users.is_teacher()
+    users.required_role(1)
 
     if request.method == "GET":
         return render_template("create.html")
@@ -74,12 +74,12 @@ def create():
 
 
 @app.route("/courses", methods=["GET"])
-def courses_route():
+def all_courses():
     users.logged_in()
-    course_list = courses.list_courses()
-    number_of_courses = len(course_list)
+    course_list = courses.all_courses()
+    course_count = len(course_list)
     return render_template(
-        "courses.html", course_list=course_list, number_of_courses=number_of_courses
+        "courses.html", course_list=course_list, course_count=course_count
     )
 
 
@@ -87,3 +87,17 @@ def courses_route():
 def course(name):
     users.logged_in()
     return render_template("one_course.html", course_name=name)
+
+
+@app.route("/my_courses", methods=["GET"])
+def my_courses():
+    users.logged_in()
+    if users.is_teacher():
+        teacher_id = users.user_id()
+        course_list = courses.my_courses_teacher(teacher_id)
+    if users.is_student():
+        course_list = courses.my_courses_student()
+    course_count = len(course_list)
+    return render_template(
+        "my_courses.html", course_list=course_list, course_count=course_count
+    )

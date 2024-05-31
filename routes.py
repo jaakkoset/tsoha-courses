@@ -69,7 +69,7 @@ def create():
             return render_template("error.html", message="Kurssin nimi on varattu")
         id = users.user_id()
         if courses.create_course(course_name, id):
-            return redirect("/")
+            return redirect("/courses/" + course_name)
         return render_template("error.html", message="Kurssin luonti epäonnistui")
 
 
@@ -142,17 +142,13 @@ def enroll(course_name):
         if courses.is_enrolled(course_name, user_id):
             render_template("error.html", message="Olet jo liittynyt kurssille")
         if courses.enroll(course_name, user_id):
-            return redirect("/")
+            return redirect("/courses/" + course_name)
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
 @app.route("/courses/<course_name>/update_course", methods=["POST"])
 def update_course(course_name):
     update_value = request.form["update_value"]
-    print()
-    print(course_name)
-    print(update_value)
-    print()
     courses.course_exists(course_name)
     user_id = users.user_id()
     if courses.course_owner(course_name, user_id):

@@ -157,17 +157,16 @@ def description(course_name):
     return description
 
 
-def update_course(course_name, update_value):
+def update_course(course_name):
     try:
         sql = """
                     UPDATE courses 
-                    SET course_open=:update_value
+                    SET course_open=course_open+1
                     WHERE name=:course_name"""
         db.session.execute(
             text(sql),
             {
                 "course_name": course_name,
-                "update_value": update_value,
             },
         )
         db.session.commit()

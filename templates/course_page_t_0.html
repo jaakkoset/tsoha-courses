@@ -6,16 +6,17 @@ No one else can view the course. -->
 
 <p>Olet kurssin omistaja</p>
 <p>Kurssia ei ole aloitettu. Muut eivät voi nähdä kurssia.</p>
-<form action="/courses/{{ course_name }}/update_course" method="post">
+<form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="1">
+    <input type="hidden" name="course_name" value="{{ course_name }}">
     <button type="submit">Aloita kurssi</button>
 </form>
 <h3>Lisää tehtävä</h3>
-<form action="/courses/{{ course_name }}/add_exercise_one" method="get">
+<form action="/add_exercise_one/{{ course_name }}" method="get">
     <button type="submit">Tekstivastaus</button>
 </form>
 <br>
-<form action="/courses/{{ course_name }}/add_multiple" method="get">
+<form action="/add_exercise_multiple/{{ course_name }}" method="get">
     <button type="submit">Monivalinta EI KÄYTÖSSÄ</button>
 </form>
 

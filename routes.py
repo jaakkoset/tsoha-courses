@@ -156,13 +156,13 @@ def enroll(course_name):
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
-@app.route("/courses/<course_name>/update_course", methods=["POST"])
-def update_course(course_name):
-    update_value = request.form["update_value"]
+@app.route("/update_course", methods=["POST"])
+def update_course():
+    course_name = request.form["course_name"]
     courses.course_exists(course_name)
     user_id = users.user_id()
     if courses.course_owner(course_name, user_id):
-        if courses.update_course(course_name, update_value):
+        if courses.update_course(course_name):
             return redirect("/courses/" + course_name)
         return render_template(
             "error.html", message="Kurssin tilan päivitys epäonnistui"
@@ -170,7 +170,7 @@ def update_course(course_name):
     return abort(403)
 
 
-@app.route("/courses/<course_name>/add_exercise_one", methods=["GET", "POST"])
+@app.route("/add_exercise_one/<course_name>", methods=["GET", "POST"])
 def add_exercise(course_name):
     courses.course_exists(course_name)
     user_id = users.user_id()
@@ -212,9 +212,14 @@ def exercise_page(course_name, exercise_id):
             course_name=course_name,
             enrolled=1,
         )
+    return "Vain kurssin omistaja ja kursille liittyneet voivat tällä hetkellä nähdä kysymykset"
 
 
-@app.route("/courses/<course_name>/<exercise_id>/answer", methods=["POST"])
-def answer(course_name, exercise_id):
+@app.route("/answer", methods=["POST"])
+def answer():
     answer = request.form["answer"]
+    course_name = request.form["course_name"]
+    exercise_id = request.form["exercise_id"]
+    user_id = users.user_id()
+    courses.is_enrolled(course_name, user_id)
     return answer

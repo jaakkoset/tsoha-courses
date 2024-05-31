@@ -5,8 +5,9 @@ is on going -->
 
 <p>Olet kurssin omistaja</p>
 <p>Kurssi on käynnissä. Opiskelijat voivat liittyä kurssille.</p>
-<form action="/courses/{{ course_name }}/update_course" method="post">
+<form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="2">
+    <input type="hidden" name="course_name" value="{{ course_name }}">
     <button type="submit">Sulje kurssi</button>
 </form>
 

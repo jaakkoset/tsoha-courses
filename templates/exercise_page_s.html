@@ -11,8 +11,10 @@ Monivalintakysymys
 <h4>Kysymys</h4>
 <p>{{ exercise.4 }}</p>
 <h4>Vastauksesi</h4>
-<form action="/courses/{{ course_name }}/{{ exercise.0 }}/answer" method="POST">
+<form action="/answer" method="POST">
     <textarea name="answer" rows="6" cols="50"></textarea><br>
+    <input type="hidden" name="course_name" value="{{ course_name }}">
+    <input type="hidden" name="exercise_id" value="{{ exercise.0 }}">
     <input type="submit" value="Lähetä vastaus">
 </form>
 

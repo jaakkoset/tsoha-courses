@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h3>Kaikki kurssit</h3>
+<h3>Käynnissä olevat kurssit</h3>
 <p>Yhteensä {{ course_count }} kurssia | <a href="/my_courses">Katso omat kurssit</a></p>
 <ol>
   {% for course in course_list %}

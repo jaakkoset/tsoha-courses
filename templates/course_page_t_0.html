@@ -5,7 +5,7 @@ No one else can view the course. -->
 {% block content %}
 
 <p>Olet kurssin omistaja</p>
-<p>Kurssia ei ole aloitettu</p>
+<p>Kurssia ei ole aloitettu. Muut eivät voi nähdä kurssia.</p>
 <form action="/courses/{{ course_name }}/update_course" method="post">
     <input type="hidden" name="update_value" value="1">
     <button type="submit">Aloita kurssi</button>
@@ -16,7 +16,7 @@ No one else can view the course. -->
 </form>
 <br>
 <form action="/courses/{{ course_name }}/add_multiple" method="get">
-    <button type="submit">Monivalinta</button>
+    <button type="submit">Monivalinta EI KÄYTÖSSÄ</button>
 </form>
 
 {% endblock %}

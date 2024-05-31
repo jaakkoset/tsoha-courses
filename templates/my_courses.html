@@ -16,7 +16,7 @@
             {% elif open == 1 %}
             <br>Kurssi on käynnissä
             {% elif open == 2 %}
-            <br>Kurssi on suljettu
+            <br>Kurssi on päättynyt
             {% endif %}
         </p>
     </li>
@@ -30,7 +30,7 @@
     <li>
         <a href="/courses/{{ name }}">{{ name }}</a>
         {% if open == 2 %}
-        Kurssi on suljettu
+        Kurssi on päättynyt
         {% endif %}
     </li>
     <br>

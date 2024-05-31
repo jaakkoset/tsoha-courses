@@ -1,11 +1,9 @@
 <!-- Course page for the owner (teacher) of this course, before the 
 course has been started. The owner can create and modify questions.
 No one else can view the course. -->
-{% extends "layout.html" %}
+{% extends "course_page_layout.html" %}
 {% block content %}
 
-<h1>{{ course_name }}</h1>
-<p>{{ description }}</p>
 <p>Olet kurssin omistaja</p>
 <p>Kurssia ei ole aloitettu</p>
 <form action="/courses/{{ course_name }}/update_course" method="post">

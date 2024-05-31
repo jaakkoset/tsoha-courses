@@ -1,10 +1,8 @@
 <!-- Course page for the owner (teacher) of this course, when the course 
 is on going -->
-{% extends "layout.html" %}
+{% extends "course_page_layout.html" %}
 {% block content %}
 
-<h1>{{ course_name }}</h1>
-<p>{{ description }}</p>
 <p>Olet kurssin omistaja</p>
 <p>Kurssi on käynnissä</p>
 <form action="/courses/{{ course_name }}/update_course" method="post">

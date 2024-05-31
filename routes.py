@@ -119,8 +119,13 @@ def course_page(course_name):
     else:
         abort(403)
 
+    exercise_list = exercises.course_exercises(course_name)
     return render_template(
-        template, course_name=course_name, open=open, description=description
+        template,
+        course_name=course_name,
+        open=open,
+        description=description,
+        exercises=exercise_list,
     )
     # if template:
     #     return render_template(template, course_name=course_name, open=open)

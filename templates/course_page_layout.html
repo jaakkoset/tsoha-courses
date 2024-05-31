@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<title>Tehtäväsovellus</title>
+<h1>Tehtäväsovellus</h1>
+<a href="/">Etusivu</a>
+{% if session.user_id %}
+<a href="/logout">Kirjaudu ulos</a>
+{% endif %}
+<hr />
+
+<h1>{{ course_name }}</h1>
+<p>{{ description }}</p>
+
+{% block content %}
+{% endblock %}
+
+<h3>Tehtävät</h3>
+
+<ol>
+    {% for exercise in exercises %}
+    <li><a href="/courses/{{ course_name }}/{{ exercise.0 }}">{{ exercise.0 }}</a></li>
+    <br>
+    {% endfor %}
+</ol>

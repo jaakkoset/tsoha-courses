@@ -1,11 +1,8 @@
 <!-- Course page for teachers who are not the owner of this course 
 (vt = visiting teacher). They can view but not join the course -->
-{% extends "layout.html" %}
+{% extends "course_page_layout.html" %}
 {% block content %}
 
-<h1>{{ course_name }}</h1>
-<p>{{ description }}</p>
-<p>Kurssi {{ course_name }}</p>
 <p>Opettajat eivät voi liittyä muiden kursseille</p>
 
 {% endblock %}

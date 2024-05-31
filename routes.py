@@ -63,9 +63,9 @@ def create():
     if request.method == "POST":
         course_name = request.form["course_name"]
         description = request.form["description"]
-        if len(course_name) < 1 or len(course_name) > 40:
+        if len(course_name) < 1 or len(course_name) > 50:
             return render_template(
-                "error.html", message="Kurssin nimen tulee olla 1-40 merkkiä pitkä"
+                "error.html", message="Kurssin nimen tulee olla 1-50 merkkiä pitkä"
             )
         if len(description) < 1 or len(description) > 1000:
             return render_template(
@@ -189,3 +189,15 @@ def add_exercise(course_name):
         return render_template(
             "error.html", message="Kysymyksen lisääminen epäonnistui"
         )
+
+
+@app.route("/courses/<course_name>/<exercise_id>", methods=["GET"])
+def exercise_page(course_name, exercise_id):
+    courses.course_exists(course_name)
+    users.required_role([0, 1])
+    user_id = users.user_id()
+    if courses.course_owner(course_name, user_id):
+        exercise = exercises.exercise_data(exercise_id)
+        if exercise == None:
+            abort(404)
+        return render_template("exercise_page_t.html", exercise=exercise)

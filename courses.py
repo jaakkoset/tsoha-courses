@@ -132,7 +132,7 @@ def course_owner(course_name, user_id):
 def course_exists(course_name):
     sql = """
             SELECT 
-                COALESCE(id, 0)
+                id
             FROM 
                 courses 
             WHERE 

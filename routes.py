@@ -127,11 +127,6 @@ def course_page(course_name):
         description=description,
         exercises=exercise_list,
     )
-    # if template:
-    #     return render_template(template, course_name=course_name, open=open)
-    # return render_template(
-    #     "error.html", message="Käyttäjän käyttöoikeutta kurssille ei voitu määrittää"
-    # )
 
 
 @app.route("/my_courses", methods=["GET"])

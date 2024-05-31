@@ -74,9 +74,7 @@ def my_courses_student(user_id):
 
 
 def enroll(course_name, user_id):
-    sql = """SELECT id FROM courses WHERE name=:course_name"""
-    result = db.session.execute(text(sql), {"course_name": course_name})
-    course_id = result.fetchone()[0]
+    c_id = course_id(course_name)
     try:
         sql = """INSERT INTO enrollment 
                     (course_id, student_id) 
@@ -85,7 +83,7 @@ def enroll(course_name, user_id):
         db.session.execute(
             text(sql),
             {
-                "course_id": course_id,
+                "course_id": c_id,
                 "student_id": user_id,
             },
         )

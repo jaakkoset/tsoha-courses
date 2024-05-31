@@ -37,5 +37,4 @@ def course_exercises(course_name):
             WHERE course_id=:course_id"""
     result = db.session.execute(text(sql), {"course_id": course_id})
     exercises = result.fetchall()
-    # exercises = [e[0] for e in exercises]
     return exercises

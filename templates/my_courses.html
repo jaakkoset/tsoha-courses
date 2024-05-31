@@ -6,8 +6,6 @@
 
 {% if session.role == 1 %}
 
-<p>Opettajan näkymä</p>
-
 <ol>
     {% for name, open in course_list %}
     <li>
@@ -26,8 +24,6 @@
 </ol>
 
 {% elif session.role == 0 %}
-
-<p>Oppilaan näkymä</p>
 
 <ol>
     {% for name, open in course_list %}

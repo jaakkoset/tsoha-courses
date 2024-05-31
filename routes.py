@@ -98,6 +98,7 @@ def course_page(course_name):
     open = courses.course_open(course_name)
     description = courses.description(course_name)
     template = None
+    teacher = None
 
     if courses.course_owner(course_name, user_id):
         if open == 0:
@@ -106,16 +107,14 @@ def course_page(course_name):
             template = "course_page_t_1.html"
         elif open == 2:
             template = "course_page_t_2.html"
-    elif users.is_teacher():
-        if open == 1:
-            template = "course_page_vt_1.html"
     elif courses.is_enrolled(course_name, user_id):
         if open == 1:
             template = "course_page_s_1.html"
         elif open == 2:
             template = "course_page_s_2.html"
     elif open == 1:
-        template = "course_page_vs_1.html"
+        teacher = users.is_teacher()
+        template = "course_page_v_1.html"
     else:
         abort(403)
 
@@ -126,6 +125,7 @@ def course_page(course_name):
         open=open,
         description=description,
         exercises=exercise_list,
+        teacher=teacher,
     )
 
 

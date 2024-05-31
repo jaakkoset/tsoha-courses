@@ -46,11 +46,12 @@ CREATE TABLE exercises
     choices TEXT
 );
 
--- Contains all submissions on all courses by a student.
+-- Contains exercise submissions by students.
 -- correct is 0 for wrong answers and 1 for right answers.
 CREATE TABLE submissions
 (
     id SERIAL PRIMARY KEY,
+    student_id INTEGER REFERENCES users,
     exercise_id INTEGER REFERENCES exercises,
     answer TEXT,
     correct INTEGER,

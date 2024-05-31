@@ -3,6 +3,8 @@ is on going -->
 {% extends "layout.html" %}
 {% block content %}
 
+<h1>{{ course_name }}</h1>
+<p>{{ description }}</p>
 <p>Olet kurssin omistaja</p>
 <p>Kurssi on käynnissä</p>
 <form action="/courses/{{ course_name }}/update_course" method="post">

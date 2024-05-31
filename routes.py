@@ -61,14 +61,23 @@ def create():
 
     if request.method == "POST":
         course_name = request.form["course_name"]
-        if len(course_name) < 1 or len(course_name) > 30:
+        description = request.form["description"]
+        print()
+        print("description", description)
+        print()
+        if len(course_name) < 1 or len(course_name) > 40:
             return render_template(
-                "error.html", message="Kurssin nimen tulee olla 1-30 merkkiä pitkä"
+                "error.html", message="Kurssin nimen tulee olla 1-40 merkkiä pitkä"
+            )
+        if len(description) < 1 or len(description) > 1000:
+            return render_template(
+                "error.html",
+                message="Kurssin kuvauksen tulee olla 1-1000 merkkiä pitkä",
             )
         if courses.name_reserved(course_name):
             return render_template("error.html", message="Kurssin nimi on varattu")
         id = users.user_id()
-        if courses.create_course(course_name, id):
+        if courses.create_course(course_name, description, id):
             return redirect("/courses/" + course_name)
         return render_template("error.html", message="Kurssin luonti epäonnistui")
 
@@ -89,6 +98,7 @@ def course_page(course_name):
     users.required_role([0, 1])
     user_id = users.user_id()
     open = courses.course_open(course_name)
+    description = courses.description(course_name)
     template = None
 
     if courses.course_owner(course_name, user_id):
@@ -111,7 +121,9 @@ def course_page(course_name):
     else:
         abort(403)
 
-    return render_template(template, course_name=course_name, open=open)
+    return render_template(
+        template, course_name=course_name, open=open, description=description
+    )
     # if template:
     #     return render_template(template, course_name=course_name, open=open)
     # return render_template(

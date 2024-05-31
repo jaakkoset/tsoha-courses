@@ -3,12 +3,12 @@ from flask import abort
 from sqlalchemy.sql import text
 
 
-def create_course(course_name, id):
+def create_course(course_name, description, id):
     try:
         sql = """INSERT INTO courses 
-                    (name, teacher_id, course_open, visible) 
+                    (name, teacher_id, course_open, visible, description) 
                 VALUES 
-                    (:name,:teacher_id,:course_open,:visible)"""
+                    (:name,:teacher_id,:course_open,:visible,:description)"""
         db.session.execute(
             text(sql),
             {
@@ -16,6 +16,7 @@ def create_course(course_name, id):
                 "teacher_id": id,
                 "course_open": 0,
                 "visible": 1,
+                "description": description,
             },
         )
         db.session.commit()
@@ -151,6 +152,13 @@ def course_open(course_name):
     return open
 
 
+def description(course_name):
+    sql = """SELECT description FROM courses WHERE name=:course_name"""
+    result = db.session.execute(text(sql), {"course_name": course_name})
+    description = result.fetchone()[0]
+    return description
+
+
 def update_course(course_name, update_value):
     try:
         sql = """
@@ -166,6 +174,5 @@ def update_course(course_name, update_value):
         )
         db.session.commit()
     except:
-        print("courses.update_course palauttaa False")
         return False
     return True

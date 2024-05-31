@@ -38,8 +38,8 @@ CREATE TABLE enrollment
 CREATE TABLE exercises
 (
     id SERIAL PRIMARY KEY,
-    name TEXT,
     course_id INTEGER REFERENCES courses,
+    name TEXT,
     type TEXT,
     question TEXT,
     answer TEXT,

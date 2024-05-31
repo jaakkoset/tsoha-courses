@@ -176,3 +176,10 @@ def update_course(course_name, update_value):
     except:
         return False
     return True
+
+
+def course_id(course_name):
+    sql = """SELECT id FROM courses WHERE name=:course_name"""
+    result = db.session.execute(text(sql), {"course_name": course_name})
+    id = result.fetchone()[0]
+    return id

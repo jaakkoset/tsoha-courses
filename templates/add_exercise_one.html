@@ -1,0 +1,22 @@
+<!-- Page for adding an exercise without answer choices. -->
+{% extends "layout.html" %}
+{% block content %}
+
+
+<form action="/courses/{{ course_name }}/add_exercise_one" method="POST">
+    <p>
+        Tehtävän nimi:
+        <input type="text" name="name">
+    <p>
+        Tehtävän kysymys: <br>
+        <textarea name="question" rows="6" cols="50"></textarea>
+    <p>
+        Oikea vastaus:
+        <input type="text" name="answer">
+    <p>
+        <input type="submit" value="Lisää tehtävä">
+
+</form>
+
+
+{% endblock %}

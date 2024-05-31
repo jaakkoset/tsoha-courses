@@ -2,6 +2,7 @@ from app import app
 from flask import render_template, redirect, request, abort
 import users
 import courses
+import exercises
 
 
 @app.route("/")
@@ -62,9 +63,6 @@ def create():
     if request.method == "POST":
         course_name = request.form["course_name"]
         description = request.form["description"]
-        print()
-        print("description", description)
-        print()
         if len(course_name) < 1 or len(course_name) > 40:
             return render_template(
                 "error.html", message="Kurssin nimen tulee olla 1-40 merkkiä pitkä"
@@ -170,3 +168,24 @@ def update_course(course_name):
             "error.html", message="Kurssin tilan päivitys epäonnistui"
         )
     return abort(403)
+
+
+@app.route("/courses/<course_name>/add_exercise_one", methods=["GET", "POST"])
+def add_exercise(course_name):
+    courses.course_exists(course_name)
+    user_id = users.user_id()
+    if not courses.course_owner(course_name, user_id):
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("add_exercise_one.html", course_name=course_name)
+
+    if request.method == "POST":
+        name = request.form["name"]
+        question = request.form["question"]
+        answer = request.form["answer"]
+        if exercises.add_exercise(course_name, name, "one", question, answer, None):
+            return redirect("/courses/" + course_name)
+        return render_template(
+            "error.html", message="Kysymyksen lisääminen epäonnistui"
+        )

@@ -13,22 +13,12 @@ No one else can view the course. -->
     <button type="submit">Aloita kurssi</button>
 </form>
 <h3>Lisää tehtävä</h3>
-
-<form action="/add" method="POST">
-    Tehtävän tyyppi:
-    <p>
-        <input type="radio" name="pizza" value="1"> Tekstivastaus
-        <input type="radio" name="pizza" value="2"> Monivalinta
-    <p>
-        Valitse lisät:
-    <p>
-        <input type="checkbox" name="extra" value="A"> oregano
-        <input type="checkbox" name="extra" value="B"> valkosipuli
-    <p>
-        Tehtävän kysymys: <br>
-        <textarea name="message" rows="3" cols="50"></textarea>
-    <p>
-        <input type="submit" value="Lähetä">
+<form action="/courses/{{ course_name }}/add_exercise_one" method="get">
+    <button type="submit">Tekstivastaus</button>
+</form>
+<br>
+<form action="/courses/{{ course_name }}/add_multiple" method="get">
+    <button type="submit">Monivalinta</button>
 </form>
 
 {% endblock %}

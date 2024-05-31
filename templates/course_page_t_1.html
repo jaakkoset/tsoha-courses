@@ -1,0 +1,13 @@
+<!-- Course page for the owner (teacher) of this course, when the course 
+is on going -->
+{% extends "layout.html" %}
+{% block content %}
+
+<p>Olet kurssin omistaja</p>
+<p>Kurssi on käynnissä</p>
+<form action="/courses/{{ course_name }}/update_course" method="post">
+    <input type="hidden" name="update_value" value="2">
+    <button type="submit">Sulje kurssi</button>
+</form>
+
+{% endblock %}

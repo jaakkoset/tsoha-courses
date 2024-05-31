@@ -54,7 +54,7 @@ def register():
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
-    users.required_role(1)
+    users.required_role([1])
 
     if request.method == "GET":
         return render_template("create.html")
@@ -86,22 +86,37 @@ def all_courses():
 @app.route("/courses/<course_name>", methods=["GET"])
 def course_page(course_name):
     courses.course_exists(course_name)
-    users.logged_in()
+    users.required_role([0, 1])
     user_id = users.user_id()
-    if courses.course_owner(course_name, user_id):
-        status = "owner"
-    elif users.is_teacher():
-        status = "teacher"
-    elif courses.is_enrolled(course_name, user_id):
-        status = "student"
-    else:
-        status = "visitor"
     open = courses.course_open(course_name)
-    if open == 1 or status == "owner" or status == "student":
-        return render_template(
-            "course_page.html", course_name=course_name, status=status, open=open
-        )
-    return abort(404)
+    template = None
+
+    if courses.course_owner(course_name, user_id):
+        if open == 0:
+            template = "course_page_t_0.html"
+        elif open == 1:
+            template = "course_page_t_1.html"
+        elif open == 2:
+            template = "course_page_t_2.html"
+    elif users.is_teacher():
+        if open == 1:
+            template = "course_page_vt_1.html"
+    elif courses.is_enrolled(course_name, user_id):
+        if open == 1:
+            template = "course_page_s_1.html"
+        elif open == 2:
+            template = "course_page_s_2.html"
+    elif open == 1:
+        template = "course_page_vs_1.html"
+    else:
+        abort(403)
+
+    return render_template(template, course_name=course_name, open=open)
+    # if template:
+    #     return render_template(template, course_name=course_name, open=open)
+    # return render_template(
+    #     "error.html", message="Käyttäjän käyttöoikeutta kurssille ei voitu määrittää"
+    # )
 
 
 @app.route("/my_courses", methods=["GET"])
@@ -122,7 +137,7 @@ def my_courses():
 def enroll(course_name):
     courses.course_exists(course_name)
     if courses.course_open(course_name) == 1:
-        users.required_role(0)
+        users.required_role([0])
         user_id = users.user_id()
         if courses.is_enrolled(course_name, user_id):
             render_template("error.html", message="Olet jo liittynyt kurssille")

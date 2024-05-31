@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
 
-{% if session.role == 1 %}
 <p>
 <h3>Luo uusi kurssi</h3>
 </p>
@@ -11,7 +10,5 @@
     <br>
     <input type="submit" value="Luo kurssi">
 </form>
-
-{% endif %}
 
 {% endblock %}

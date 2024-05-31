@@ -64,8 +64,8 @@ def is_student():
     return False
 
 
-def required_role(role):
-    if session.get("role") != role:
+def required_role(role: list):
+    if session.get("role") not in role:
         abort(403)
 
 

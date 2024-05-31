@@ -1,0 +1,9 @@
+<!-- Course page for students who are not enrolled in this course. 
+(vs = visiting student). They can view and enroll in the course.-->
+{% extends "layout.html" %}
+{% block content %}
+
+<p>Kurssi {{ course_name }}</p>
+<p><a href="/enroll/{{ course_name }}">Liity kurssille</a></p>
+
+{% endblock %}

@@ -139,8 +139,8 @@ def course_exists(course_name):
             WHERE 
                 name=:course_name"""
     result = db.session.execute(text(sql), {"course_name": course_name})
-    enrolled = result.fetchone()
-    if not enrolled:
+    exist = result.fetchone()
+    if not exist:
         abort(404)
 
 

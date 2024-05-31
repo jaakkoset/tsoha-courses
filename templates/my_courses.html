@@ -33,10 +33,11 @@
     {% for name, open in course_list %}
     <li>
         <a href="/courses/{{ name }}">{{ name }}</a>
-        <br>{% if open == 3 %}
+        {% if open == 2 %}
         Kurssi on suljettu
-        {% endif %}</br>
+        {% endif %}
     </li>
+    <br>
     {% endfor %}
 </ol>
 

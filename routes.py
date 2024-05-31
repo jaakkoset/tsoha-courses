@@ -196,8 +196,25 @@ def exercise_page(course_name, exercise_id):
     courses.course_exists(course_name)
     users.required_role([0, 1])
     user_id = users.user_id()
+    exercise = exercises.exercise_data(exercise_id)
+    if exercise == None:
+        abort(404)
     if courses.course_owner(course_name, user_id):
-        exercise = exercises.exercise_data(exercise_id)
-        if exercise == None:
-            abort(404)
         return render_template("exercise_page_t.html", exercise=exercise)
+
+    open = courses.course_open(course_name)
+    if courses.is_enrolled(course_name, user_id):
+        exercise = [i for i in exercise]
+        exercise.pop(5)  # Don't send the answer to user
+        return render_template(
+            "exercise_page_s.html",
+            exercise=exercise,
+            course_name=course_name,
+            enrolled=1,
+        )
+
+
+@app.route("/courses/<course_name>/<exercise_id>/answer", methods=["POST"])
+def answer(course_name, exercise_id):
+    answer = request.form["answer"]
+    return answer

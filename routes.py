@@ -204,7 +204,7 @@ def add_exercise(course_name):
         )
 
 
-@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET"])
+@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET", "POST"])
 def exercise_page(course_name, exercise_id):
     courses.course_exists(course_name)
     users.required_role([0, 1])
@@ -213,18 +213,21 @@ def exercise_page(course_name, exercise_id):
     if exercise == None:
         abort(404)
     if courses.course_owner(course_name, user_id):
-        return render_template("exercise_page_t.html", exercise=exercise)
+        return render_template(
+            "exercise_page_t.html", exercise=exercise, course_name=course_name
+        )
 
     open = courses.course_open(course_name)
     if courses.is_enrolled(course_name, user_id):
         exercise = [i for i in exercise]
-        exercise.pop(5)  # Don't send the answer to user
+        exercise.pop()  # Don't send the answer to students
         # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
         return render_template(
             "exercise_page_s.html",
             exercise=exercise,
             course_name=course_name,
-            enrolled=1,
+            show_result=0,
+            submission=None,
         )
     return "Vain kurssin omistaja ja kursille liittyneet voivat tällä hetkellä nähdä kysymykset"
 
@@ -236,5 +239,21 @@ def answer():
     course_name = request.form["course_name"]
     exercise_id = request.form["exercise_id"]
     user_id = users.user_id()
-    courses.is_enrolled(course_name, user_id)
-    return answer
+    if not exercises.submit(exercise_id, user_id, answer):
+        return render_template("error.html", message="Palautus epäonnistui")
+
+    if courses.is_enrolled(course_name, user_id):
+        exercise = exercises.exercise_data(exercise_id)
+        exercise = [i for i in exercise]
+        exercise.pop()  # Don't send the answer to students
+        # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
+        submission = exercises.submission_data(exercise_id, user_id)
+        # (0 id, 1 student_id , 2 exercise_id, 3 answer, 4 correct, 5 time)
+        print(submission)
+        return render_template(
+            "exercise_page_s.html",
+            exercise=exercise,
+            course_name=course_name,
+            show_result=1,
+            submission=submission,
+        )

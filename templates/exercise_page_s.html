@@ -1,16 +1,11 @@
 <!-- Exercise page for students. -->
-{% extends "layout.html" %}
+{% extends "exercise_page_layout.html" %}
 {% block content %}
-
+<a href="/courses/{{ course_name }}">Palaa kurssisivulle</a>
 <h3>{{ exercise.2 }}</h3>
-{% if exercise.3 == "one" %}
-Tekstivastauskysymys
-{% else %}
-Monivalintakysymys
-{% endif %}
-<h4>Kysymys</h4>
 <p>{{ exercise.4 }}</p>
-<h4>Vastauksesi</h4>
+
+<h4>Anna vastaus:</h4>
 <form action="/answer" method="POST">
     <textarea name="answer" rows="3" cols="50"></textarea><br>
     <input type="hidden" name="course_name" value="{{ course_name }}">
@@ -18,5 +13,19 @@ Monivalintakysymys
     <input type="submit" value="Lähetä vastaus">
 </form>
 
+{% if show_result == 1 %}
+
+{% if submission.4 == False %}
+<br>
+<strong>Vastasit väärin</strong>
+{% else %}
+<br>
+<b>Vastasit oikein</b>
+{% endif %}
+
+<h4>Vastauksesi:</h4>
+<p>{{ submission.3 }}</p>
+
+{% endif %}
 
 {% endblock %}

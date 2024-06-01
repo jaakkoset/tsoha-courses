@@ -1,7 +1,7 @@
 <!-- Exercise page for the teacher of the course. -->
-{% extends "layout.html" %}
+{% extends "exercise_page_layout.html" %}
 {% block content %}
-
+<a href="/courses/{{ course_name }}">Palaa kurssisivulle</a>
 <h3>{{ exercise.2 }}</h3>
 {% if exercise.3 == "one" %}
 Tekstivastauskysymys
@@ -11,6 +11,6 @@ Monivalintakysymys
 <h4>Kysymys</h4>
 <p>{{ exercise.4 }}</p>
 <h4>Vastaus</h4>
-<p>{{ exercise.5 }}</p>
+<p>{{ exercise.6 }}</p>
 
 {% endblock %}

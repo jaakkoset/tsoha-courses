@@ -47,13 +47,13 @@ CREATE TABLE exercises
 );
 
 -- Contains exercise submissions by students.
--- correct is 0 for wrong answers and 1 for right answers.
+-- correct is False for wrong answers and True for right answers.
 CREATE TABLE submissions
 (
     id SERIAL PRIMARY KEY,
     student_id INTEGER REFERENCES users,
     exercise_id INTEGER REFERENCES exercises,
     answer TEXT,
-    correct INTEGER,
+    correct BOOLEAN,
     time TIMESTAMP
 );

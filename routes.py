@@ -4,6 +4,10 @@ import users
 import courses
 import exercises
 
+# URL checks are to be implemented some day
+# import urllib.parse
+# URL = urllib.parse.quote_plus(course_name)
+
 
 @app.route("/")
 def index():
@@ -53,6 +57,7 @@ def register():
         return render_template("error.html", message="Rekisteröinti ei onnistunut")
 
 
+# Creates a new course.
 @app.route("/create", methods=["GET", "POST"])
 def create():
     users.required_role([1])
@@ -80,6 +85,7 @@ def create():
         return render_template("error.html", message="Kurssin luonti epäonnistui")
 
 
+# Lists all ongoing courses.
 @app.route("/courses", methods=["GET"])
 def all_courses():
     users.logged_in()
@@ -90,7 +96,8 @@ def all_courses():
     )
 
 
-@app.route("/courses/<course_name>", methods=["GET"])
+# Course page for individual courses.
+@app.route("/courses/<string:course_name>", methods=["GET"])
 def course_page(course_name):
     courses.course_exists(course_name)
     users.required_role([0, 1])
@@ -129,6 +136,8 @@ def course_page(course_name):
     )
 
 
+# Page where students see the courses in which they have enrolled,
+# and teachers see the courses they own.
 @app.route("/my_courses", methods=["GET"])
 def my_courses():
     users.logged_in()
@@ -143,7 +152,8 @@ def my_courses():
     )
 
 
-@app.route("/enroll/<course_name>", methods=["GET"])
+# Allows students to enroll in courses.
+@app.route("/enroll/<string:course_name>", methods=["GET"])
 def enroll(course_name):
     courses.course_exists(course_name)
     if courses.course_open(course_name) == 1:
@@ -156,6 +166,8 @@ def enroll(course_name):
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
+# Changes the state of a course. First from not-yet-started to ongoing and
+# then from ongoing to concluded. Changing the state cannot be reversed.
 @app.route("/update_course", methods=["POST"])
 def update_course():
     course_name = request.form["course_name"]
@@ -170,7 +182,8 @@ def update_course():
     return abort(403)
 
 
-@app.route("/add_exercise_one/<course_name>", methods=["GET", "POST"])
+# Adds an exercise without answer choices.
+@app.route("/add_exercise_one/<string:course_name>", methods=["GET", "POST"])
 def add_exercise(course_name):
     courses.course_exists(course_name)
     user_id = users.user_id()
@@ -191,7 +204,7 @@ def add_exercise(course_name):
         )
 
 
-@app.route("/courses/<course_name>/<exercise_id>", methods=["GET"])
+@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET"])
 def exercise_page(course_name, exercise_id):
     courses.course_exists(course_name)
     users.required_role([0, 1])
@@ -206,6 +219,7 @@ def exercise_page(course_name, exercise_id):
     if courses.is_enrolled(course_name, user_id):
         exercise = [i for i in exercise]
         exercise.pop(5)  # Don't send the answer to user
+        # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
         return render_template(
             "exercise_page_s.html",
             exercise=exercise,
@@ -215,6 +229,7 @@ def exercise_page(course_name, exercise_id):
     return "Vain kurssin omistaja ja kursille liittyneet voivat tällä hetkellä nähdä kysymykset"
 
 
+# Checks the answer sent by a student.
 @app.route("/answer", methods=["POST"])
 def answer():
     answer = request.form["answer"]

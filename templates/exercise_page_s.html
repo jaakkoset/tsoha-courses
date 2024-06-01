@@ -1,4 +1,4 @@
-<!-- Exercise page students. -->
+<!-- Exercise page for students. -->
 {% extends "layout.html" %}
 {% block content %}
 
@@ -12,7 +12,7 @@ Monivalintakysymys
 <p>{{ exercise.4 }}</p>
 <h4>Vastauksesi</h4>
 <form action="/answer" method="POST">
-    <textarea name="answer" rows="6" cols="50"></textarea><br>
+    <textarea name="answer" rows="3" cols="50"></textarea><br>
     <input type="hidden" name="course_name" value="{{ course_name }}">
     <input type="hidden" name="exercise_id" value="{{ exercise.0 }}">
     <input type="submit" value="Lähetä vastaus">

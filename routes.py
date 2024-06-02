@@ -107,7 +107,7 @@ def course_page(course_name):
     open = courses.course_open(course_name)
     description = courses.description(course_name)
     exercise_list = exercises.course_exercises(course_name)
-    # [0 id, 1 name]
+    # [0 id, 1 name, correct]
     template = None
     teacher = users.is_teacher()
 
@@ -233,6 +233,7 @@ def exercise_page(course_name, exercise_id):
             course_name=course_name,
             show_result=0,
             submission=None,
+            open=open,
         )
     return "Vain kurssin omistaja ja kursille liittyneet voivat tällä hetkellä nähdä kysymykset"
 
@@ -244,10 +245,16 @@ def answer():
     course_name = request.form["course_name"]
     exercise_id = request.form["exercise_id"]
     user_id = users.user_id()
-    if not exercises.submit(exercise_id, user_id, answer):
-        return render_template("error.html", message="Palautus epäonnistui")
-
+    open = courses.course_open(course_name)
+    if open != 1:
+        return render_template(
+            "error.html",
+            message="Kurssi ei ole auki. Palauttaminen ei ole mahdollista.",
+        )
     if courses.is_enrolled(course_name, user_id):
+        if not exercises.submit(exercise_id, user_id, answer):
+            return render_template("error.html", message="Palautus epäonnistui")
+
         exercise = exercises.exercise_data(exercise_id)
         exercise = [i for i in exercise]
         exercise.pop()  # Don't send the answer to students
@@ -260,4 +267,6 @@ def answer():
             course_name=course_name,
             show_result=1,
             submission=submission,
+            open=open,
         )
+    abort(403)

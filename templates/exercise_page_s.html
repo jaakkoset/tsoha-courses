@@ -5,6 +5,7 @@
 <h3>{{ exercise.2 }}</h3>
 <p>{{ exercise.4 }}</p>
 
+{% if open == 1 %}
 <h4>Anna vastaus:</h4>
 <form action="/answer" method="POST">
     <textarea name="answer" rows="3" cols="50"></textarea><br>
@@ -12,10 +13,13 @@
     <input type="hidden" name="exercise_id" value="{{ exercise.0 }}">
     <input type="submit" value="Lähetä vastaus">
 </form>
+{% else %}
+<h4>Tehtävien palautus on päättynyt.</h4>
+{% endif %}
 
 {% if show_result == 1 %}
 
-{% if submission.4 == False %}
+{% if submission.4 == 0 %}
 <br>
 <strong>Vastasit väärin</strong>
 {% else %}

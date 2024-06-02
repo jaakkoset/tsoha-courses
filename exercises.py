@@ -6,7 +6,6 @@ import courses
 def add_exercise(course_name, name, type, question, answer, choices):
     try:
         course_id = courses.course_id(course_name)
-        print(course_id)
         sql = """
                 INSERT INTO 
                     exercises (course_id,name,type,question,answer,choices)
@@ -80,8 +79,8 @@ def check_answer(exercise_id, answer):
     result = db.session.execute(text(sql), {"exercise_id": exercise_id})
     exercises = result.fetchone()[0]
     if exercises == answer:
-        return True
-    return False
+        return 1
+    return 0
 
 
 def submission_data(exercise_id, user_id):
@@ -96,5 +95,24 @@ def submission_data(exercise_id, user_id):
         text(sql), {"exercise_id": exercise_id, "student_id": user_id}
     )
     submission = result.fetchone()
-    print(submission)
     return submission
+
+
+def completed_exercises(user_id, completed_exercises):
+    exercises = [[c[0], c[1], 0] for c in completed_exercises]
+    for row in exercises:
+        sql = """
+                SELECT id,correct
+                FROM submissions
+                WHERE 
+                    exercise_id=:exercise_id AND
+                    student_id=:user_id AND
+                    correct=1"""
+        result = db.session.execute(
+            text(sql), {"exercise_id": row[0], "user_id": user_id}
+        )
+        completed = result.fetchone()
+        if completed:
+            row[2] = 1
+
+    return exercises

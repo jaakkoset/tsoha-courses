@@ -14,8 +14,16 @@
 <h3>Tehtävät</h3>
 
 <ol>
-    {% for exercise in exercises %}
-    <li><a href="/courses/{{ course_name }}/{{ exercise.0 }}">{{ exercise.1 }}</a></li>
-    <br>
+    {% for id, name, correct in exercises %}
+    <li>
+        <p>
+            <a href="/courses/{{ course_name }}/{{ id }}">{{ name }}</a>
+            {% if not teacher %}
+            {% if correct %}
+            <b>Tehty</b>
+            {% endif %}
+            {% endif %}
+        </p>
+    </li>
     {% endfor %}
 </ol>

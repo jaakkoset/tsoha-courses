@@ -4,9 +4,11 @@ import users
 import courses
 import exercises
 
-# URL checks are to be implemented some day
+# URL quoting is to be implemented some day
 # import urllib.parse
+# urllib.parse.quote_plus(string, safe='', encoding=None, errors=None)
 # URL = urllib.parse.quote_plus(course_name)
+# urllib.parse.unquote_plus(string, encoding='utf-8', errors='replace')
 
 
 @app.route("/")
@@ -104,8 +106,10 @@ def course_page(course_name):
     user_id = users.user_id()
     open = courses.course_open(course_name)
     description = courses.description(course_name)
+    exercise_list = exercises.course_exercises(course_name)
+    # [0 id, 1 name]
     template = None
-    teacher = None
+    teacher = users.is_teacher()
 
     if courses.course_owner(course_name, user_id):
         if open == 0:
@@ -115,17 +119,17 @@ def course_page(course_name):
         elif open == 2:
             template = "course_page_t_2.html"
     elif courses.is_enrolled(course_name, user_id):
+        exercise_list = exercises.completed_exercises(user_id, exercise_list)
+        # [0 id, 1 name, 2 correct]
         if open == 1:
             template = "course_page_s_1.html"
         elif open == 2:
             template = "course_page_s_2.html"
     elif open == 1:
-        teacher = users.is_teacher()
         template = "course_page_v_1.html"
     else:
         abort(403)
 
-    exercise_list = exercises.course_exercises(course_name)
     return render_template(
         template,
         course_name=course_name,
@@ -210,6 +214,7 @@ def exercise_page(course_name, exercise_id):
     users.required_role([0, 1])
     user_id = users.user_id()
     exercise = exercises.exercise_data(exercise_id)
+    # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices, 6 answer]
     if exercise == None:
         abort(404)
     if courses.course_owner(course_name, user_id):
@@ -249,7 +254,6 @@ def answer():
         # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
         submission = exercises.submission_data(exercise_id, user_id)
         # (0 id, 1 student_id , 2 exercise_id, 3 answer, 4 correct, 5 time)
-        print(submission)
         return render_template(
             "exercise_page_s.html",
             exercise=exercise,

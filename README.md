@@ -54,8 +54,8 @@ Määritä sitten tietokannan skeema komennolla
 
 Luo sovelluksen juurikansioo vielä .env -tiedosto ja määritä siellä salainen avaimesi ja tietokannan osoite
 
-  DATABASE_URL=postgresql+psycopg2:///`<tietokannan_nimi>`  
-  SECRET_KEY=`<salainen avaimesi>`
+    DATABASE_URL=postgresql+psycopg2:///`<tietokannan_nimi>`  
+    SECRET_KEY=`<salainen avaimesi>`
 
 Nyt olet valmis testamaan sovellusta komennolla 
 

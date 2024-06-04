@@ -1,8 +1,10 @@
 <!-- Course page for the teacher after the course has been concluded -->
-{% extends "course_page_layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
+{% include "course_page_topic.html" %}
 
 <p>Olet kurssin omistaja</p>
 <p>Kurssi on päättynyt. Kurssille ei voi enää liittyä.</p>
 
+{% include "course_page_exercises.html" %}
 {% endblock %}

@@ -1,9 +1,12 @@
 <!-- Course page for students who are enrolled in this course when the course
 is ongoing -->
-{% extends "course_page_layout.html" %}
+{% extends "layout.html" %}
+
 {% block content %}
+{% include "course_page_topic.html" %}
 
 <p>Olet liittynyt tälle kurssille</p>
 <p>Kurssi on käynnissä</p>
 
+{% include "course_page_exercises.html" %}
 {% endblock %}

@@ -1,8 +1,9 @@
 <!-- Course page for visitors. Visitors are users who are not the
 owner of the course nor are enrolled in the course. Teachers cannot
 enroll in courses.-->
-{% extends "course_page_layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
+{% include "course_page_topic.html" %}
 
 {% if teacher %}
 <p>Opettajat eivät voi liittyä muiden kursseille</p>
@@ -10,4 +11,5 @@ enroll in courses.-->
 <p><a href="/enroll/{{ course_name }}">Liity kurssille</a></p>
 {% endif %}
 
+{% include "course_page_exercises.html" %}
 {% endblock %}

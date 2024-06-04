@@ -1,8 +1,9 @@
 <!-- Course page for the owner (teacher) of this course, before the 
 course has been started. The owner can create and modify questions.
 No one else can view the course. -->
-{% extends "course_page_layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
+{% include "course_page_topic.html" %}
 
 <p>Olet kurssin omistaja</p>
 <p>Kurssia ei ole aloitettu. Muut eivät voi nähdä kurssia.</p>
@@ -20,4 +21,5 @@ No one else can view the course. -->
     <button type="submit">Monivalinta EI KÄYTÖSSÄ</button>
 </form>
 
+{% include "course_page_exercises.html" %}
 {% endblock %}

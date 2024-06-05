@@ -2,7 +2,7 @@
 CREATE TABLE users
 (
     id SERIAL PRIMARY KEY,
-    username TEXT,
+    username TEXT UNIQUE,
     password TEXT,
     role INTEGER
 );
@@ -17,7 +17,7 @@ CREATE TABLE users
 CREATE TABLE courses
 (
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name TEXT UNIQUE,
     teacher_id INTEGER REFERENCES users,
     course_open INTEGER,
     visible INTEGER,

@@ -1,10 +1,10 @@
 <h3>Tehtävät</h3>
 
 <ol>
-    {% for id, name, correct in exercises %}
+    {% for exercise_id, name, correct in exercises %}
     <li>
         <p>
-            <a href="/courses/{{ course_url }}/{{ id }}">{{ name }}</a>
+            <a href="/courses/{{ course_id }}/{{ exercise_id }}">{{ name }}</a>
             {% if not teacher %}
             {% if correct %}
             <b>Tehty</b>

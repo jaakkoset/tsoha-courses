@@ -37,6 +37,7 @@ def name_reserved(course_name):
 def all_courses():
     sql = """
             SELECT 
+                id,
                 name, 
                 (SELECT username FROM users WHERE id=C.teacher_id) 
             FROM courses C 
@@ -50,6 +51,7 @@ def all_courses():
 def my_courses_teacher(user_id):
     sql = """
             SELECT 
+                id,
                 name, 
                 course_open
             FROM courses
@@ -63,6 +65,7 @@ def my_courses_teacher(user_id):
 def my_courses_student(user_id):
     sql = """
             SELECT 
+                course_id,
                 (SELECT name FROM courses WHERE id=E.course_id) course_name,
                 (SELECT course_open FROM courses WHERE id=E.course_id)
             FROM enrollment E
@@ -178,5 +181,12 @@ def update_course(course_name):
 def course_id(course_name):
     sql = """SELECT id FROM courses WHERE name=:course_name"""
     result = db.session.execute(text(sql), {"course_name": course_name})
+    id = result.fetchone()[0]
+    return id
+
+
+def course_name(course_id):
+    sql = """SELECT name FROM courses WHERE id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id})
     id = result.fetchone()[0]
     return id

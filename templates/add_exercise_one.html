@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<form action="/add_exercise_one/{{ course_url }}" method="POST">
+<form action="/add_exercise_one/{{ course_id }}" method="POST">
     <p>
         Tehtävän nimi:
         <input type="text" name="name">
@@ -12,10 +12,8 @@
     <p>
         Oikea vastaus:
         <input type="text" name="answer">
-        <input type="hidden" name="testi" value="Diibadaabaa">
     <p>
         <input type="submit" value="Lisää tehtävä">
-        <input type="hidden" name="testi1" value="Diibadaabaa11111">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 

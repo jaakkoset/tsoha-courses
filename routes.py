@@ -68,6 +68,7 @@ def create():
         return render_template("create.html")
 
     if request.method == "POST":
+        users.check_csrf()
         course_name = request.form["course_name"]
         description = request.form["description"]
         if len(course_name) < 1 or len(course_name) > 50:
@@ -177,6 +178,7 @@ def update_course():
     course_name = request.form["course_name"]
     courses.course_exists(course_name)
     user_id = users.user_id()
+    users.check_csrf()
     if courses.course_owner(course_name, user_id):
         if courses.update_course(course_name):
             return redirect("/courses/" + course_name)
@@ -198,6 +200,7 @@ def add_exercise(course_name):
         return render_template("add_exercise_one.html", course_name=course_name)
 
     if request.method == "POST":
+        users.check_csrf()
         name = request.form["name"]
         question = request.form["question"]
         answer = request.form["answer"]
@@ -208,7 +211,7 @@ def add_exercise(course_name):
         )
 
 
-@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET", "POST"])
+@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET"])
 def exercise_page(course_name, exercise_id):
     courses.course_exists(course_name)
     users.required_role([0, 1])
@@ -252,6 +255,7 @@ def answer():
             message="Kurssi ei ole auki. Palauttaminen ei ole mahdollista.",
         )
     if courses.is_enrolled(course_name, user_id):
+        users.check_csrf()
         if not exercises.submit(exercise_id, user_id, answer):
             return render_template("error.html", message="Palautus epäonnistui")
 

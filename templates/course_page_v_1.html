@@ -8,7 +8,12 @@ enroll in courses.-->
 {% if teacher %}
 <p>Opettajat eivät voi liittyä muiden kursseille</p>
 {% else %}
-<p><a href="/enroll/{{ course_name }}">Liity kurssille</a></p>
+
+<form action="/enroll/{{ course_name }}" method="post">
+    <button type="submit">Liity kurssille</button>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
 {% endif %}
 
 {% include "course_page_exercises.html" %}

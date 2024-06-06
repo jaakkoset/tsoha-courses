@@ -15,7 +15,7 @@
         <input type="text" name="answer">
     <p>
         <input type="submit" value="Lisää tehtävä">
-
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 

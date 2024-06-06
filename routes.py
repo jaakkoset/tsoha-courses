@@ -158,9 +158,10 @@ def my_courses():
 
 
 # Allows students to enroll in courses.
-@app.route("/enroll/<string:course_name>", methods=["GET"])
+@app.route("/enroll/<string:course_name>", methods=["GET", "POST"])
 def enroll(course_name):
     courses.course_exists(course_name)
+    users.check_csrf()
     if courses.course_open(course_name) == 1:
         users.required_role([0])
         user_id = users.user_id()

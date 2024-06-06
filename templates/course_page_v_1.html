@@ -9,7 +9,7 @@ enroll in courses.-->
 <p>Opettajat eivät voi liittyä muiden kursseille</p>
 {% else %}
 
-<form action="/enroll/{{ course_name }}" method="post">
+<form action="/enroll/{{ course_url }}" method="post">
     <button type="submit">Liity kurssille</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

@@ -14,12 +14,12 @@ No one else can view the course. -->
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <h3>Lisää tehtävä</h3>
-<form action="/add_exercise_one/{{ course_name }}" method="get">
+<form action="/add_exercise_one/{{ course_url }}" method="get">
     <button type="submit">Tekstivastaus</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <br>
-<form action="/add_exercise_multiple/{{ course_name }}" method="get">
+<form action="/add_exercise_multiple/{{ course_url }}" method="get">
     <button type="submit">Monivalinta EI KÄYTÖSSÄ</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

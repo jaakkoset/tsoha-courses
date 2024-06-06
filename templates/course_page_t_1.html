@@ -10,6 +10,7 @@ is ongoing -->
     <input type="hidden" name="update_value" value="2">
     <input type="hidden" name="course_name" value="{{ course_name }}">
     <button type="submit">Päätä kurssi</button>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 
 {% include "course_page_exercises.html" %}

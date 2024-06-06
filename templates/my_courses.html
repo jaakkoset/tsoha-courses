@@ -9,10 +9,10 @@ enrolled. Teachers see the courses they own. -->
 {% if session.role == 1 %}
 
 <ol>
-    {% for name, open in course_list %}
+    {% for name, open, url in course_list %}
     <li>
         <p>
-            <a href="/courses/{{ name }}">{{ name }}</a>
+            <a href="/courses/{{ url }}">{{ name }}</a>
             {% if open == 0 %}
             <br>Kurssia ei ole aloitettu
             {% elif open == 1 %}
@@ -28,9 +28,9 @@ enrolled. Teachers see the courses they own. -->
 {% elif session.role == 0 %}
 
 <ol>
-    {% for name, open in course_list %}
+    {% for name, open, url in course_list %}
     <li>
-        <a href="/courses/{{ name }}">{{ name }}</a>
+        <a href="/courses/{{ url }}">{{ name }}</a>
         {% if open == 2 %}
         Kurssi on päättynyt
         {% endif %}

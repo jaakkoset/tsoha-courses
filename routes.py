@@ -3,6 +3,7 @@ from flask import render_template, redirect, request, abort
 import users
 import courses
 import exercises
+import urllib.parse
 
 # URL quoting is to be implemented some day
 # import urllib.parse
@@ -82,9 +83,10 @@ def create():
             )
         if courses.name_reserved(course_name):
             return render_template("error.html", message="Kurssin nimi on varattu")
-        id = users.user_id()
-        if courses.create_course(course_name, description, id):
-            return redirect("/courses/" + course_name)
+        teacher_id = users.user_id()
+        if courses.create_course(course_name, description, teacher_id):
+            course_url = urllib.parse.quote_plus(course_name)
+            return redirect("/courses/" + course_url)
         return render_template("error.html", message="Kurssin luonti epäonnistui")
 
 
@@ -93,6 +95,9 @@ def create():
 def all_courses():
     users.logged_in()
     course_list = courses.all_courses()
+    # [0 course_name, 1 teacher_name]
+    course_list = [(i[0], i[1], urllib.parse.quote_plus(i[0])) for i in course_list]
+    # [0 course_name, 1 teacher_name, 2 course_url]
     course_count = len(course_list)
     return render_template(
         "courses.html", course_list=course_list, course_count=course_count
@@ -100,8 +105,14 @@ def all_courses():
 
 
 # Course page for individual courses.
-@app.route("/courses/<string:course_name>", methods=["GET"])
-def course_page(course_name):
+@app.route("/courses/<path:course_url>", methods=["GET"])
+def course_page(course_url):
+    print()
+    print("course_url:", course_url)
+    course_name = urllib.parse.unquote_plus(course_url)
+    print()
+    print("course_name:", course_name)
+    print()
     courses.course_exists(course_name)
     users.required_role([0, 1])
     user_id = users.user_id()
@@ -134,6 +145,7 @@ def course_page(course_name):
     return render_template(
         template,
         course_name=course_name,
+        course_url=course_url,
         open=open,
         description=description,
         exercises=exercise_list,
@@ -152,14 +164,19 @@ def my_courses():
     elif users.is_student():
         course_list = courses.my_courses_student(user_id)
     course_count = len(course_list)
+    course_list = [[i[0], i[1], urllib.parse.quote_plus(i[0])] for i in course_list]
+    for i in course_list:
+        print("name", i[0])
+        print("url ", i[2])
     return render_template(
         "my_courses.html", course_list=course_list, course_count=course_count
     )
 
 
 # Allows students to enroll in courses.
-@app.route("/enroll/<string:course_name>", methods=["GET", "POST"])
-def enroll(course_name):
+@app.route("/enroll/<path:course_url>", methods=["GET", "POST"])
+def enroll(course_url):
+    course_name = urllib.parse.unquote_plus(course_url)
     courses.course_exists(course_name)
     users.check_csrf()
     if courses.course_open(course_name) == 1:
@@ -168,7 +185,7 @@ def enroll(course_name):
         if courses.is_enrolled(course_name, user_id):
             render_template("error.html", message="Olet jo liittynyt kurssille")
         if courses.enroll(course_name, user_id):
-            return redirect("/courses/" + course_name)
+            return redirect("/courses/" + course_url)
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
@@ -181,8 +198,10 @@ def update_course():
     user_id = users.user_id()
     users.check_csrf()
     if courses.course_owner(course_name, user_id):
+        course_url = urllib.parse.quote_plus(course_name)
         if courses.update_course(course_name):
-            return redirect("/courses/" + course_name)
+
+            return redirect("/courses/" + course_url)
         return render_template(
             "error.html", message="Kurssin tilan päivitys epäonnistui"
         )
@@ -190,15 +209,18 @@ def update_course():
 
 
 # Adds an exercise without answer choices.
-@app.route("/add_exercise_one/<string:course_name>", methods=["GET", "POST"])
-def add_exercise(course_name):
+@app.route("/add_exercise_one/<path:course_url>", methods=["GET", "POST"])
+def add_exercise(course_url):
+    course_name = urllib.parse.unquote_plus(course_url)
     courses.course_exists(course_name)
     user_id = users.user_id()
     if not courses.course_owner(course_name, user_id):
         abort(403)
 
     if request.method == "GET":
-        return render_template("add_exercise_one.html", course_name=course_name)
+        return render_template(
+            "add_exercise_one.html", course_name=course_name, course_url=course_url
+        )
 
     if request.method == "POST":
         users.check_csrf()
@@ -206,14 +228,15 @@ def add_exercise(course_name):
         question = request.form["question"]
         answer = request.form["answer"]
         if exercises.add_exercise(course_name, name, "one", question, answer, None):
-            return redirect("/courses/" + course_name)
+            return redirect("/courses/" + course_url)
         return render_template(
             "error.html", message="Kysymyksen lisääminen epäonnistui"
         )
 
 
-@app.route("/courses/<string:course_name>/<int:exercise_id>", methods=["GET"])
-def exercise_page(course_name, exercise_id):
+@app.route("/courses/<path:course_url>/<int:exercise_id>", methods=["GET"])
+def exercise_page(course_url, exercise_id):
+    course_name = urllib.parse.unquote_plus(course_url)
     courses.course_exists(course_name)
     users.required_role([0, 1])
     user_id = users.user_id()
@@ -223,7 +246,10 @@ def exercise_page(course_name, exercise_id):
         abort(404)
     if courses.course_owner(course_name, user_id):
         return render_template(
-            "exercise_page_t.html", exercise=exercise, course_name=course_name
+            "exercise_page_t.html",
+            exercise=exercise,
+            course_name=course_name,
+            course_url=course_url,
         )
 
     open = courses.course_open(course_name)
@@ -235,6 +261,7 @@ def exercise_page(course_name, exercise_id):
             "exercise_page_s.html",
             exercise=exercise,
             course_name=course_name,
+            course_url=course_url,
             show_result=0,
             submission=None,
             open=open,

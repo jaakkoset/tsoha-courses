@@ -4,7 +4,7 @@
     {% for id, name, correct in exercises %}
     <li>
         <p>
-            <a href="/courses/{{ course_name }}/{{ id }}">{{ name }}</a>
+            <a href="/courses/{{ course_url }}/{{ id }}">{{ name }}</a>
             {% if not teacher %}
             {% if correct %}
             <b>Tehty</b>

@@ -5,8 +5,8 @@
 <h3>Käynnissä olevat kurssit</h3>
 <p>Yhteensä {{ course_count }} kurssia | <a href="/my_courses">Katso omat kurssit</a></p>
 <ol>
-  {% for course in course_list %}
-  <li><a href="/courses/{{ course.0 }}">{{ course.0 }}, <i>{{ course.1 }}</i></a></li>
+  {% for course_name, teacher_name, url in course_list %}
+  <li><a href="/courses/{{ url }}">{{ course_name }}, <i>{{ teacher_name }}</i></a></li>
   <br>
   {% endfor %}
 </ol>

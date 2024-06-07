@@ -76,8 +76,7 @@ def my_courses_student(user_id):
     return courses
 
 
-def enroll(course_name, user_id):
-    c_id = course_id(course_name)
+def enroll(course_id, user_id):
     try:
         sql = """INSERT INTO enrollment 
                     (course_id, student_id) 
@@ -86,7 +85,7 @@ def enroll(course_name, user_id):
         db.session.execute(
             text(sql),
             {
-                "course_id": c_id,
+                "course_id": course_id,
                 "student_id": user_id,
             },
         )
@@ -96,7 +95,7 @@ def enroll(course_name, user_id):
     return True
 
 
-def is_enrolled(course_name, user_id):
+def is_enrolled(course_id, user_id):
     sql = """
             SELECT 
                 id
@@ -104,17 +103,15 @@ def is_enrolled(course_name, user_id):
                 enrollment 
             WHERE 
                 student_id=:user_id AND 
-                course_id=(SELECT id FROM courses WHERE name=:course_name)"""
-    result = db.session.execute(
-        text(sql), {"course_name": course_name, "user_id": user_id}
-    )
+                course_id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id, "user_id": user_id})
     enrolled = result.fetchone()
     if enrolled:
         return True
     return False
 
 
-def course_owner(course_name, user_id):
+def course_owner(course_id, user_id):
     sql = """
             SELECT 
                 id
@@ -122,33 +119,49 @@ def course_owner(course_name, user_id):
                 courses 
             WHERE 
                 teacher_id=:user_id AND 
-                name=:course_name"""
-    result = db.session.execute(
-        text(sql), {"course_name": course_name, "user_id": user_id}
-    )
+                id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id, "user_id": user_id})
     owner = result.fetchone()
     if owner:
         return True
     return False
 
 
-def course_exists(course_name):
+# returns (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
+def course_info(course_id):
+    sql = """SELECT
+                id, 
+                name,
+                teacher_id,
+                course_open,
+                visible,
+                description
+            FROM courses 
+            WHERE id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id})
+    data = result.fetchone()
+    if not data:
+        abort(404)
+    return data
+
+
+def course_exists(course_id):
     sql = """
             SELECT 
                 id
             FROM 
                 courses 
             WHERE 
-                name=:course_name"""
-    result = db.session.execute(text(sql), {"course_name": course_name})
+                id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id})
     exist = result.fetchone()
     if not exist:
         abort(404)
 
 
-def course_open(course_name):
-    sql = """SELECT course_open FROM courses WHERE name=:course_name"""
-    result = db.session.execute(text(sql), {"course_name": course_name})
+def course_open(course_id):
+    sql = """SELECT course_open FROM courses WHERE id=:course_id"""
+    result = db.session.execute(text(sql), {"course_id": course_id})
     open = result.fetchone()[0]
     return open
 
@@ -160,16 +173,16 @@ def description(course_name):
     return description
 
 
-def update_course(course_name):
+def update_course(course_id):
     try:
         sql = """
                     UPDATE courses 
                     SET course_open=course_open+1
-                    WHERE name=:course_name"""
+                    WHERE id=:course_id"""
         db.session.execute(
             text(sql),
             {
-                "course_name": course_name,
+                "course_id": course_id,
             },
         )
         db.session.commit()

@@ -9,7 +9,7 @@ No one else can view the course. -->
 <p>Kurssia ei ole aloitettu. Muut eivät voi nähdä kurssia.</p>
 <form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="1">
-    <input type="hidden" name="course_name" value="{{ course_name }}">
+    <input type="hidden" name="course_id" value="{{ course_id }}">
     <button type="submit">Aloita kurssi</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

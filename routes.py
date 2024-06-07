@@ -86,7 +86,7 @@ def create():
         teacher_id = users.user_id()
         if courses.create_course(course_name, description, teacher_id):
             course_id = courses.course_id(course_name)
-            return redirect("/courses/" + course_id)
+            return redirect("/courses/" + str(course_id))
         return render_template("error.html", message="Kurssin luonti epäonnistui")
 
 
@@ -105,27 +105,25 @@ def all_courses():
 # Course page for individual courses.
 @app.route("/courses/<int:course_id>", methods=["GET"])
 def course_page(course_id):
-    course_name = courses.course_name(course_id)
-    courses.course_exists(course_name)
+    # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
+    course_info = courses.course_info(course_id)
     users.required_role([0, 1])
     user_id = users.user_id()
-    open = courses.course_open(course_name)
-    description = courses.description(course_name)
-    exercise_list = exercises.course_exercises(course_name)
-    # [0 id, 1 name, correct]
-    template = None
+    # [0 id, 1 name, 2 None]
+    exercise_list = exercises.course_exercises(course_id)
     teacher = users.is_teacher()
+    open = course_info[3]
 
-    if courses.course_owner(course_name, user_id):
+    if courses.course_owner(course_id, user_id):
         if open == 0:
             template = "course_page_t_0.html"
         elif open == 1:
             template = "course_page_t_1.html"
         elif open == 2:
             template = "course_page_t_2.html"
-    elif courses.is_enrolled(course_name, user_id):
-        exercise_list = exercises.completed_exercises(user_id, exercise_list)
+    elif courses.is_enrolled(course_id, user_id):
         # [0 id, 1 name, 2 correct]
+        exercise_list = exercises.completed_exercises(user_id, exercise_list)
         if open == 1:
             template = "course_page_s_1.html"
         elif open == 2:
@@ -134,13 +132,12 @@ def course_page(course_id):
         template = "course_page_v_1.html"
     else:
         abort(403)
-
     return render_template(
         template,
-        course_name=course_name,
+        course_name=course_info[1],
         course_id=course_id,
         open=open,
-        description=description,
+        description=course_info[5],
         exercises=exercise_list,
         teacher=teacher,
     )
@@ -150,7 +147,6 @@ def course_page(course_id):
 # and teachers see the courses they own.
 @app.route("/my_courses", methods=["GET"])
 def my_courses():
-    users.logged_in()
     user_id = users.user_id()
     if users.is_teacher():
         course_list = courses.my_courses_teacher(user_id)
@@ -167,16 +163,15 @@ def my_courses():
 # Allows students to enroll in courses.
 @app.route("/enroll/<int:course_id>", methods=["GET", "POST"])
 def enroll(course_id):
-    course_name = courses.course_name(course_id)
-    courses.course_exists(course_name)
+    courses.course_exists(course_id)
     users.check_csrf()
-    if courses.course_open(course_name) == 1:
+    if courses.course_open(course_id) == 1:
         users.required_role([0])
         user_id = users.user_id()
-        if courses.is_enrolled(course_name, user_id):
+        if courses.is_enrolled(course_id, user_id):
             render_template("error.html", message="Olet jo liittynyt kurssille")
-        if courses.enroll(course_name, user_id):
-            return redirect("/courses/" + course_id)
+        if courses.enroll(course_id, user_id):
+            return redirect("/courses/" + str(course_id))
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
@@ -184,14 +179,13 @@ def enroll(course_id):
 # then from ongoing to concluded. Changing the state cannot be reversed.
 @app.route("/update_course", methods=["POST"])
 def update_course():
-    course_name = request.form["course_name"]
-    courses.course_exists(course_name)
+    course_id = request.form["course_id"]
+    courses.course_exists(course_id)
     user_id = users.user_id()
     users.check_csrf()
-    if courses.course_owner(course_name, user_id):
-        if courses.update_course(course_name):
-            course_id = courses.course_id(course_name)
-            return redirect("/courses/" + course_id)
+    if courses.course_owner(course_id, user_id):
+        if courses.update_course(course_id):
+            return redirect("/courses/" + str(course_id))
         return render_template(
             "error.html", message="Kurssin tilan päivitys epäonnistui"
         )
@@ -202,9 +196,9 @@ def update_course():
 @app.route("/add_exercise_one/<int:course_id>", methods=["GET", "POST"])
 def add_exercise(course_id):
     course_name = courses.course_name(course_id)
-    courses.course_exists(course_name)
+    courses.course_exists(course_id)
     user_id = users.user_id()
-    if not courses.course_owner(course_name, user_id):
+    if not courses.course_owner(course_id, user_id):
         abort(403)
 
     if request.method == "GET":
@@ -217,8 +211,8 @@ def add_exercise(course_id):
         name = request.form["name"]
         question = request.form["question"]
         answer = request.form["answer"]
-        if exercises.add_exercise(course_name, name, "one", question, answer, None):
-            return redirect("/courses/" + course_id)
+        if exercises.add_exercise(course_id, name, "one", question, answer, None):
+            return redirect("/courses/" + str(course_id))
         return render_template(
             "error.html", message="Kysymyksen lisääminen epäonnistui"
         )
@@ -226,15 +220,15 @@ def add_exercise(course_id):
 
 @app.route("/courses/<int:course_id>/<int:exercise_id>", methods=["GET"])
 def exercise_page(course_id, exercise_id):
-    course_name = courses.course_name(course_id)
-    courses.course_exists(course_name)
+    courses.course_exists(course_id)
     users.required_role([0, 1])
     user_id = users.user_id()
     exercise = exercises.exercise_data(exercise_id)
     # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices, 6 answer]
     if exercise == None:
         abort(404)
-    if courses.course_owner(course_name, user_id):
+    course_name = courses.course_name(course_id)
+    if courses.course_owner(course_id, user_id):
         return render_template(
             "exercise_page_t.html",
             exercise=exercise,
@@ -242,8 +236,8 @@ def exercise_page(course_id, exercise_id):
             course_id=course_id,
         )
 
-    open = courses.course_open(course_name)
-    if courses.is_enrolled(course_name, user_id):
+    if courses.is_enrolled(course_id, user_id):
+        open = courses.course_open(course_id)
         exercise = [i for i in exercise]
         exercise.pop()  # Don't send the answer to students
         # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
@@ -263,21 +257,20 @@ def exercise_page(course_id, exercise_id):
 @app.route("/answer", methods=["POST"])
 def answer():
     answer = request.form["answer"]
-    course_name = request.form["course_name"]
+    course_id = request.form["course_id"]
     exercise_id = request.form["exercise_id"]
-    course_id = courses.course_id(course_name)
     user_id = users.user_id()
-    open = courses.course_open(course_name)
+    open = courses.course_open(course_id)
     if open != 1:
         return render_template(
             "error.html",
             message="Kurssi ei ole auki. Palauttaminen ei ole mahdollista.",
         )
-    if courses.is_enrolled(course_name, user_id):
+    if courses.is_enrolled(course_id, user_id):
         users.check_csrf()
-        if not exercises.submit(exercise_id, user_id, answer):
-            return render_template("error.html", message="Palautus epäonnistui")
-        return redirect(
-            f"/courses/{course_id}/{exercise_id}",
-        )
+        if exercises.submit(exercise_id, user_id, answer):
+            return redirect(
+                f"/courses/{course_id}/{exercise_id}",
+            )
+        return render_template("error.html", message="Palautus epäonnistui")
     abort(403)

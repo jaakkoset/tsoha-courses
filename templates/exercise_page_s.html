@@ -9,7 +9,7 @@
 <h4>Anna vastaus:</h4>
 <form action="/answer" method="POST">
     <textarea name="answer" rows="3" cols="50"></textarea><br>
-    <input type="hidden" name="course_name" value="{{ course_name }}">
+    <input type="hidden" name="course_id" value="{{ course_id }}">
     <input type="hidden" name="exercise_id" value="{{ exercise.0 }}">
     <input type="submit" value="Lähetä vastaus">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

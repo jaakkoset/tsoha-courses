@@ -3,9 +3,8 @@ from sqlalchemy.sql import text
 import courses
 
 
-def add_exercise(course_name, name, type, question, answer, choices):
+def add_exercise(course_id, name, type, question, answer, choices):
     try:
-        course_id = courses.course_id(course_name)
         sql = """
                 INSERT INTO 
                     exercises (course_id,name,type,question,answer,choices)
@@ -28,8 +27,7 @@ def add_exercise(course_name, name, type, question, answer, choices):
     return True
 
 
-def course_exercises(course_name):
-    course_id = courses.course_id(course_name)
+def course_exercises(course_id):
     sql = """
             SELECT id, name
             FROM exercises

@@ -1,0 +1,17 @@
+<!-- Page where students can see their submissions for an exercise. -->
+{% extends "layout.html" %}
+{% block content %}
+<a href="/courses/{{ course_id }}/{{ exercise_id }}">Palaa harjoitukseen</a>
+
+<ol>
+    {% for id, answer, correct, time in submissions %}
+    <li>
+        <p>
+            <i>{{ time }}</i> {% if correct == 1 %} <b>Oikein</b> {% else %} <b>Väärin</b> {% endif %}
+            <br>{{ answer }}
+        </p>
+    </li>
+    {% endfor %}
+</ol>
+
+{% endblock %}

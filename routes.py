@@ -251,6 +251,7 @@ def exercise_page(course_id, exercise_id):
         exercise_id = exercise_info[0]
         last_submission = exercises.last_submission(user_id, exercise_id)
         solved = exercises.exercise_solved(user_id, exercise_id)
+        # submissions = exercises.submissions_by_student(user_id, exercise_id)
         return render_template(
             "exercise_page_s.html",
             exercise_info=exercise_info,
@@ -286,3 +287,19 @@ def answer():
             )
         return render_template("error.html", message="Palautus epäonnistui")
     abort(403)
+
+
+@app.route("/submissions/<int:course_id>/<int:exercise_id>", methods=["GET"])
+def submissions_page(course_id, exercise_id):
+    user_id = users.user_id()
+    if not courses.is_enrolled(course_id, user_id):
+        abort(403)
+    # (0 id, 1 answer, 2 correct, 3 time)
+    submissions = exercises.submissions_by_student(user_id, exercise_id)
+    print(submissions)
+    return render_template(
+        "submissions_page_s.html",
+        submissions=submissions,
+        course_id=course_id,
+        exercise_id=exercise_id,
+    )

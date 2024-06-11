@@ -150,3 +150,22 @@ def exercise_solved(user_id, exercise_id) -> tuple | None:
     )
     solved = result.fetchone()
     return solved
+
+
+def submissions_by_student(user_id, exercise_id) -> list | None:
+    sql = """
+            SELECT 
+                id,
+                answer,
+                correct,
+                DATE_TRUNC('second', time)
+            FROM 
+                submissions
+            WHERE 
+                student_id=:user_id AND
+                exercise_id=:exercise_id"""
+    result = db.session.execute(
+        text(sql), {"user_id": user_id, "exercise_id": exercise_id}
+    )
+    submissions = result.fetchall()
+    return submissions

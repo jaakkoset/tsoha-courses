@@ -5,7 +5,7 @@ enroll in courses.-->
 {% block content %}
 {% include "course_page_topic.html" %}
 
-{% if teacher %}
+{% if role == 1 %}
 <p>Opettajat eivät voi liittyä muiden kursseille</p>
 {% else %}
 

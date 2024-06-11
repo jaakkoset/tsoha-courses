@@ -1,12 +1,12 @@
 <h3>Tehtävät</h3>
 
 <ol>
-    {% for exercise_id, name, correct in exercises %}
+    {% for exercise_id, exercise_name in exercises %}
     <li>
         <p>
-            <a href="/courses/{{ course_id }}/{{ exercise_id }}">{{ name }}</a>
-            {% if not teacher %}
-            {% if correct %}
+            <a href="/courses/{{ course_id }}/{{ exercise_id }}">{{ exercise_name }} {{ exercise_id }}</a>
+            {% if session.role == 0 %}
+            {% if exercise_id in completed_exercises %}
             <b>Tehty</b>
             {% endif %}
             {% endif %}

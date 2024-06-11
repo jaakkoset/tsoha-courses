@@ -3,7 +3,7 @@ from sqlalchemy.sql import text
 import courses
 
 
-def add_exercise(course_id, name, type, question, answer, choices):
+def add_exercise(course_id, name, type, question, answer, choices) -> bool:
     try:
         sql = """
                 INSERT INTO 
@@ -27,18 +27,17 @@ def add_exercise(course_id, name, type, question, answer, choices):
     return True
 
 
-def course_exercises(course_id):
+def course_exercises(course_id: int) -> list | None:
     sql = """
             SELECT id, name
             FROM exercises
             WHERE course_id=:course_id"""
     result = db.session.execute(text(sql), {"course_id": course_id})
     exercises = result.fetchall()
-    exercises = [[e[0], e[1], None] for e in exercises]
     return exercises
 
 
-def exercise_data(exercise_id):
+def exercise_info(exercise_id: int) -> tuple | None:
     sql = """
             SELECT id, course_id, name, type, question, choices, answer
             FROM exercises
@@ -48,7 +47,7 @@ def exercise_data(exercise_id):
     return data
 
 
-def submit(exercise_id, user_id, answer):
+def submit(exercise_id, user_id, answer) -> bool:
     correct = check_answer(exercise_id, answer)
     try:
         sql = """INSERT INTO submissions 
@@ -82,7 +81,7 @@ def check_answer(exercise_id, answer):
     return 0
 
 
-def submission_data(exercise_id, user_id):
+def submission_data(exercise_id, user_id) -> tuple | None:
     sql = """
             SELECT id,student_id ,exercise_id,answer,correct,time
             FROM submissions
@@ -97,21 +96,20 @@ def submission_data(exercise_id, user_id):
     return submission
 
 
-def completed_exercises(user_id, completed_exercises):
-    exercises = [[c[0], c[1], 0] for c in completed_exercises]
-    for row in exercises:
-        sql = """
-                SELECT id,correct
-                FROM submissions
-                WHERE 
-                    exercise_id=:exercise_id AND
-                    student_id=:user_id AND
-                    correct=1"""
-        result = db.session.execute(
-            text(sql), {"exercise_id": row[0], "user_id": user_id}
-        )
-        completed = result.fetchone()
-        if completed:
-            row[2] = 1
-
-    return exercises
+def completed_exercises(user_id: int, course_id: list) -> dict:
+    sql = """
+            SELECT 
+                DISTINCT(S.exercise_id),
+                S.correct
+            FROM 
+                submissions S, 
+                exercises E
+            WHERE 
+                E.course_id=:course_id AND
+                E.id=S.exercise_id AND
+                S.student_id=:user_id AND
+                S.correct=1"""
+    result = db.session.execute(text(sql), {"course_id": course_id, "user_id": user_id})
+    completed = result.fetchall()
+    completed = {i[0]: i[1] for i in completed}
+    return completed

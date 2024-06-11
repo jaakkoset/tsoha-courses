@@ -3,7 +3,7 @@ from flask import abort
 from sqlalchemy.sql import text
 
 
-def create_course(course_name, description, id):
+def create_course(course_name, description, id) -> bool:
     try:
         sql = """INSERT INTO courses 
                     (name, teacher_id, course_open, visible, description) 
@@ -25,7 +25,7 @@ def create_course(course_name, description, id):
     return True
 
 
-def name_reserved(course_name):
+def name_reserved(course_name) -> bool:
     sql = "SELECT id FROM courses WHERE name=:course_name"
     result = db.session.execute(text(sql), {"course_name": course_name})
     user = result.fetchone()
@@ -34,7 +34,7 @@ def name_reserved(course_name):
     return False
 
 
-def all_courses():
+def open_courses() -> list | None:
     sql = """
             SELECT 
                 id,
@@ -48,7 +48,7 @@ def all_courses():
     return courses
 
 
-def my_courses_teacher(user_id):
+def my_courses_teacher(user_id) -> list | None:
     sql = """
             SELECT 
                 id,
@@ -62,7 +62,7 @@ def my_courses_teacher(user_id):
     return courses
 
 
-def my_courses_student(user_id):
+def my_courses_student(user_id) -> list | None:
     sql = """
             SELECT 
                 course_id,
@@ -76,7 +76,7 @@ def my_courses_student(user_id):
     return courses
 
 
-def enroll(course_id, user_id):
+def enroll(course_id, user_id) -> bool:
     try:
         sql = """INSERT INTO enrollment 
                     (course_id, student_id) 
@@ -95,7 +95,7 @@ def enroll(course_id, user_id):
     return True
 
 
-def is_enrolled(course_id, user_id):
+def is_enrolled(course_id, user_id) -> bool:
     sql = """
             SELECT 
                 id
@@ -111,7 +111,7 @@ def is_enrolled(course_id, user_id):
     return False
 
 
-def course_owner(course_id, user_id):
+def course_owner(course_id, user_id) -> bool:
     sql = """
             SELECT 
                 id
@@ -128,7 +128,7 @@ def course_owner(course_id, user_id):
 
 
 # returns (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
-def course_info(course_id):
+def course_info(course_id: int) -> tuple | None:
     sql = """SELECT
                 id, 
                 name,
@@ -140,40 +140,21 @@ def course_info(course_id):
             WHERE id=:course_id"""
     result = db.session.execute(text(sql), {"course_id": course_id})
     data = result.fetchone()
-    if not data:
-        abort(404)
     return data
 
 
 def course_exists(course_id):
     sql = """
-            SELECT 
-                id
-            FROM 
-                courses 
-            WHERE 
-                id=:course_id"""
+            SELECT id
+            FROM courses 
+            WHERE id=:course_id"""
     result = db.session.execute(text(sql), {"course_id": course_id})
     exist = result.fetchone()
     if not exist:
         abort(404)
 
 
-def course_open(course_id):
-    sql = """SELECT course_open FROM courses WHERE id=:course_id"""
-    result = db.session.execute(text(sql), {"course_id": course_id})
-    open = result.fetchone()[0]
-    return open
-
-
-def description(course_name):
-    sql = """SELECT description FROM courses WHERE name=:course_name"""
-    result = db.session.execute(text(sql), {"course_name": course_name})
-    description = result.fetchone()[0]
-    return description
-
-
-def update_course(course_id):
+def update_course(course_id) -> bool:
     try:
         sql = """
                     UPDATE courses 
@@ -191,15 +172,8 @@ def update_course(course_id):
     return True
 
 
-def course_id(course_name):
+def course_id(course_name) -> tuple | None:
     sql = """SELECT id FROM courses WHERE name=:course_name"""
     result = db.session.execute(text(sql), {"course_name": course_name})
-    id = result.fetchone()[0]
-    return id
-
-
-def course_name(course_id):
-    sql = """SELECT name FROM courses WHERE id=:course_id"""
-    result = db.session.execute(text(sql), {"course_id": course_id})
     id = result.fetchone()[0]
     return id

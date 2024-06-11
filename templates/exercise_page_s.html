@@ -2,15 +2,15 @@
 {% extends "layout.html" %}
 {% block content %}
 <a href="/courses/{{ course_id }}">Palaa kurssisivulle</a>
-<h3>{{ exercise.2 }}</h3>
-<p>{{ exercise.4 }}</p>
+<h3>{{ exercise_info.2 }}</h3>
+<p>{{ exercise_info.4 }}</p>
 
 {% if open == 1 %}
 <h4>Anna vastaus:</h4>
 <form action="/answer" method="POST">
     <textarea name="answer" rows="3" cols="50"></textarea><br>
     <input type="hidden" name="course_id" value="{{ course_id }}">
-    <input type="hidden" name="exercise_id" value="{{ exercise.0 }}">
+    <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
     <input type="submit" value="Lähetä vastaus">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

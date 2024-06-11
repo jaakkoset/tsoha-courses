@@ -3,15 +3,15 @@
 {% block content %}
 
 <a href="/courses/{{ course_id }}">Palaa kurssisivulle</a>
-<h3>{{ exercise.2 }}</h3>
+<h3>{{ exercise_info.2 }}</h3>
 <h4>Kysymys</h4>
-<p>{{ exercise.4 }}</p>
+<p>{{ exercise_info.4 }}</p>
 <h4>Vastaus</h4>
-<p>{{ exercise.6 }}</p>
+<p>{{ exercise_info.6 }}</p>
 
-{% if exercise.3 == "multiple" %}
+{% if exercise_info.3 == "multiple" %}
 <p>Monivalintakysymyksen vaihtoehdot:</p>
-{{ exercise.5 }}
+{{ exercise_info.5 }}
 {% endif %}
 
 {% endblock %}

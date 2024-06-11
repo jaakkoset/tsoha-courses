@@ -142,7 +142,6 @@ def course_page(course_id):
         open=open,
         description=course_info[5],
         exercises=exercise_list,
-        # role=role,
     )
 
 
@@ -228,7 +227,7 @@ def add_exercise(course_id):
 @app.route("/courses/<int:course_id>/<int:exercise_id>", methods=["GET"])
 def exercise_page(course_id, exercise_id):
     users.required_role([0, 1])
-    # returns (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
+    # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
     user_id = users.user_id()
     # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices, 6 answer]
@@ -249,14 +248,17 @@ def exercise_page(course_id, exercise_id):
         # Don't send the answer to students
         exercise_info.pop()
         # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
+        exercise_id = exercise_info[0]
+        last_submission = exercises.last_submission(user_id, exercise_id)
+        solved = exercises.exercise_solved(user_id, exercise_id)
         return render_template(
             "exercise_page_s.html",
             exercise_info=exercise_info,
             course_name=course_name,
             course_id=course_id,
-            show_result=0,
-            submission=None,
+            last_submission=last_submission,
             open=open,
+            solved=solved,
         )
     return "Vain kurssille liittyneet voivat nähdä kysymykset"
 

@@ -5,6 +5,10 @@
 <h3>{{ exercise_info.2 }}</h3>
 <p>{{ exercise_info.4 }}</p>
 
+{% if solved %}
+<P><b>Olet ratkaissut tehtävän</b></P>
+{% endif %}
+
 {% if open == 1 %}
 <h4>Anna vastaus:</h4>
 <form action="/answer" method="POST">
@@ -14,23 +18,16 @@
     <input type="submit" value="Lähetä vastaus">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+{% if last_submission %}
+{% if last_submission.1 == 1 %}
+<p><b>Vastauksesi on oikein:</b></p>
+{% else %}
+<p><b>Vastauksesi on väärin:</b></p>
+{% endif %}
+<p>{{ last_submission.0 }}</p>
+{% endif %}
 {% else %}
 <h4>Tehtävien palautus on päättynyt.</h4>
-{% endif %}
-
-{% if show_result == 1 %}
-
-{% if submission.4 == 0 %}
-<br>
-<strong>Vastasit väärin</strong>
-{% else %}
-<br>
-<b>Vastasit oikein</b>
-{% endif %}
-
-<h4>Vastauksesi:</h4>
-<p>{{ submission.3 }}</p>
-
 {% endif %}
 
 {% endblock %}

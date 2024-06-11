@@ -113,3 +113,40 @@ def completed_exercises(user_id: int, course_id: list) -> dict:
     completed = result.fetchall()
     completed = {i[0]: i[1] for i in completed}
     return completed
+
+
+def last_submission(user_id, exercise_id) -> tuple | None:
+    sql = """
+            SELECT 
+                answer, 
+                correct
+            FROM 
+                submissions
+            WHERE 
+                student_id=:user_id AND
+                exercise_id=:exercise_id
+            ORDER BY
+                time DESC
+            LIMIT 1"""
+    result = db.session.execute(
+        text(sql), {"user_id": user_id, "exercise_id": exercise_id}
+    )
+    last = result.fetchone()
+    return last
+
+
+def exercise_solved(user_id, exercise_id) -> tuple | None:
+    sql = """
+            SELECT 
+                id
+            FROM 
+                submissions
+            WHERE 
+                student_id=:user_id AND
+                exercise_id=:exercise_id AND
+                correct=1"""
+    result = db.session.execute(
+        text(sql), {"user_id": user_id, "exercise_id": exercise_id}
+    )
+    solved = result.fetchone()
+    return solved

@@ -108,7 +108,7 @@ def course_page(course_id):
     users.required_role([0, 1])
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
-    users.required_role([0, 1])
+    teacher_name = users.username(course_info[2])
     user_id = users.user_id()
     # [0 id, 1 name]
     exercise_list = exercises.course_exercises(course_id)
@@ -137,6 +137,7 @@ def course_page(course_id):
     return render_template(
         template,
         course_name=course_info[1],
+        teacher_name=teacher_name,
         completed_exercises=completed_exercises,
         course_id=course_id,
         open=open,

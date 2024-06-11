@@ -3,6 +3,7 @@
 {% block content %}
 <a href="/courses/{{ course_id }}/{{ exercise_id }}">Palaa harjoitukseen</a>
 
+{% if submissions %}
 <ol>
     {% for id, answer, correct, time in submissions %}
     <li>
@@ -13,5 +14,8 @@
     </li>
     {% endfor %}
 </ol>
+{% else %}
+<p><b>Et ole lähettänyt vastauksia</b></p>
+{% endif %}
 
 {% endblock %}

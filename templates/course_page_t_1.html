@@ -8,7 +8,7 @@ is ongoing -->
 <p>Kurssi on käynnissä. Opiskelijat voivat liittyä kurssille.</p>
 <form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="2">
-    <input type="hidden" name="course_name" value="{{ course_name }}">
+    <input type="hidden" name="course_id" value="{{ course_id }}">
     <button type="submit">Päätä kurssi</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

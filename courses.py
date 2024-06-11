@@ -65,12 +65,20 @@ def my_courses_teacher(user_id) -> list | None:
 def my_courses_student(user_id) -> list | None:
     sql = """
             SELECT 
-                course_id,
-                (SELECT name FROM courses WHERE id=E.course_id) course_name,
-                (SELECT course_open FROM courses WHERE id=E.course_id)
-            FROM enrollment E
-            WHERE student_id=:user_id
-            ORDER BY course_name"""
+                C.id,
+                C.name,
+                C.course_open,
+                U.username
+            FROM 
+                enrollment E, 
+                courses C, 
+                users U
+            WHERE 
+                E.student_id=:user_id AND
+                E.course_id=C.id AND
+                C.teacher_id=U.id
+            ORDER BY 
+                C.name"""
     result = db.session.execute(text(sql), {"user_id": user_id})
     courses = result.fetchall()
     return courses

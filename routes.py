@@ -3,13 +3,6 @@ from flask import render_template, redirect, request, abort
 import users
 import courses
 import exercises
-import urllib.parse
-
-# URL quoting is to be implemented some day
-# import urllib.parse
-# urllib.parse.quote_plus(string, safe='', encoding=None, errors=None)
-# URL = urllib.parse.quote_plus(course_name)
-# urllib.parse.unquote_plus(string, encoding='utf-8', errors='replace')
 
 
 @app.route("/")
@@ -112,7 +105,11 @@ def course_page(course_id):
     user_id = users.user_id()
     # [0 id, 1 name]
     exercise_list = exercises.course_exercises(course_id)
+    nro_exercises = len(exercise_list)
     completed_exercises = None
+    nro_completed = None
+    # Used on course_page_exercises.html
+    enrolled = None
     # role = users.user_role()
     open = course_info[3]
 
@@ -126,6 +123,8 @@ def course_page(course_id):
     elif courses.is_enrolled(course_id, user_id):
         # [0 id, 1 name, 2 correct]
         completed_exercises = exercises.completed_exercises(user_id, course_id)
+        nro_completed = len(completed_exercises)
+        enrolled = True
         if open == 1:
             template = "course_page_s_1.html"
         elif open == 2:
@@ -138,11 +137,14 @@ def course_page(course_id):
         template,
         course_name=course_info[1],
         teacher_name=teacher_name,
+        nro_exercises=nro_exercises,
         completed_exercises=completed_exercises,
+        nro_completed=nro_completed,
         course_id=course_id,
         open=open,
         description=course_info[5],
         exercises=exercise_list,
+        enrolled=enrolled,
     )
 
 
@@ -293,14 +295,65 @@ def answer():
 @app.route("/submissions/<int:course_id>/<int:exercise_id>", methods=["GET"])
 def submissions_page(course_id, exercise_id):
     user_id = users.user_id()
-    if not courses.is_enrolled(course_id, user_id):
-        abort(403)
-    # (0 id, 1 answer, 2 correct, 3 time)
-    submissions = exercises.submissions_by_student(user_id, exercise_id)
-    print(submissions)
-    return render_template(
-        "submissions_page_s.html",
-        submissions=submissions,
-        course_id=course_id,
-        exercise_id=exercise_id,
-    )
+    if courses.is_enrolled(course_id, user_id):
+        # (0 id, 1 answer, 2 correct, 3 time)
+        submissions = exercises.submissions_by_student(user_id, exercise_id)
+        return render_template(
+            "submissions_page_s.html",
+            submissions=submissions,
+            course_id=course_id,
+            exercise_id=exercise_id,
+        )
+
+
+@app.route("/courses/<int:course_id>/students", methods=["GET"])
+def students(course_id):
+    user_id = users.user_id()
+    if courses.course_owner(course_id, user_id):
+        students = courses.students(course_id)
+        nro_students = len(students)
+        return render_template(
+            "students.html",
+            students=students,
+            nro_students=nro_students,
+            course_id=course_id,
+        )
+
+
+@app.route("/courses/<int:course_id>/students/<int:student_id>", methods=["GET"])
+def student_statistics(course_id, student_id):
+    user_id = users.user_id()
+    if courses.course_owner(course_id, user_id):
+        exercise_list = exercises.course_exercises(course_id)
+        nro_exercises = len(exercise_list)
+        completed_exercises = exercises.completed_exercises(student_id, course_id)
+        nro_completed = len(completed_exercises)
+        student_name = users.username(student_id)
+        return render_template(
+            "student_statistics.html",
+            student_name=student_name,
+            student_id=student_id,
+            exercise_list=exercise_list,
+            nro_exercises=nro_exercises,
+            completed_exercises=completed_exercises,
+            nro_completed=nro_completed,
+            course_id=course_id,
+        )
+
+
+@app.route(
+    "/courses/<int:course_id>/students/<int:student_id>/submissions/<int:exercise_id>",
+    methods=["GET"],
+)
+def student_submissions(course_id, student_id, exercise_id):
+    user_id = users.user_id()
+    if courses.course_owner(course_id, user_id):
+        # (0 id, 1 answer, 2 correct, 3 time)
+        submissions = exercises.submissions_by_student(student_id, exercise_id)
+        return render_template(
+            "submissions_t.html",
+            submissions=submissions,
+            course_id=course_id,
+            student_id=student_id,
+            exercise_id=exercise_id,
+        )

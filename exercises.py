@@ -83,12 +83,15 @@ def check_answer(exercise_id, answer):
 
 def submission_data(exercise_id, user_id) -> tuple | None:
     sql = """
-            SELECT id,student_id ,exercise_id,answer,correct,time
-            FROM submissions
+            SELECT 
+                id,student_id,exercise_id,answer,correct,time
+            FROM 
+                submissions
             WHERE 
                 exercise_id=:exercise_id AND
                 student_id=:student_id
-            ORDER BY time DESC"""
+            ORDER BY 
+                time DESC"""
     result = db.session.execute(
         text(sql), {"exercise_id": exercise_id, "student_id": user_id}
     )

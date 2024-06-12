@@ -1,0 +1,22 @@
+<!-- This page shows information about a student on a course. -->
+{% extends "layout.html" %}
+{% block content %}
+<a href="/courses/{{ course_id }}/students">Palaa opiskelijoihin</a>
+
+<p>{{ student_name }}</p>
+<P><b>{{ nro_completed }}/{{ nro_exercises }}</b> suoritettu</P>
+<p><b>Palautukset tehtäviin</b></p>
+<ol>
+    {% for id, name in exercise_list %}
+    <li>
+        <p>
+            <a href="/courses/{{ course_id }}/students/{{ student_id }}/submissions/{{ id }}">{{ name }}</a>
+            {% if id in completed_exercises %}
+            <b>Tehty</b>
+            {% endif %}
+        </p>
+    </li>
+    {% endfor %}
+</ol>
+
+{% endblock %}

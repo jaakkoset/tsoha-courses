@@ -5,12 +5,15 @@ No one else can view the course. -->
 {% block content %}
 {% include "course_page_topic.html" %}
 
+{% set confirm_m = 'Kun päätät kurssin opiskelijat eivät enää voi vastata kysymyksiin. 
+Haluatko varmasti päättää kurssin?' %}
+
 <p>Olet kurssin omistaja</p>
 <p>Kurssia ei ole aloitettu. Muut eivät voi nähdä kurssia.</p>
 <form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="1">
     <input type="hidden" name="course_id" value="{{ course_id }}">
-    <button type="submit">Aloita kurssi</button>
+    <input type="submit" value="Aloita kurssi" onclick="return confirm('Kun aloitat kurssin, et voi enää muokata kysymyksiä ja oppilaat voivat liittyä kurssille. Toimenpidettä ei voi peruuttaa. Haluatko aloittaa kurssin?');">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <h3>Lisää tehtävä</h3>

@@ -5,7 +5,7 @@
     <li>
         <p>
             <a href="/courses/{{ course_id }}/{{ exercise_id }}">{{ exercise_name }}</a>
-            {% if session.role == 0 %}
+            {% if enrolled %}
             {% if exercise_id in completed_exercises %}
             <b>Tehty</b>
             {% endif %}

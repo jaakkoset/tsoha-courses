@@ -1,0 +1,21 @@
+<!-- This page lists the students of a course. -->
+{% extends "layout.html" %}
+{% block content %}
+<a href="/courses/{{ course_id }}">Palaa kurssisivulle</a>
+
+{% if students %}
+<p><b>Yhteensä {{ nro_students }} opiskelijaa.</b></p>
+<ol>
+    {% for id, name in students %}
+    <li>
+        <p>
+        <a href="/courses/{{ course_id }}/students/{{ id }}">{{name}}</a>
+        </p>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<p><b>Ei opiskelijoita</b></p>
+{% endif %}
+
+{% endblock %}

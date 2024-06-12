@@ -54,9 +54,13 @@ def my_courses_teacher(user_id) -> list | None:
                 id,
                 name, 
                 course_open
-            FROM courses
-            WHERE teacher_id=:user_id AND visible=1
-            ORDER BY name"""
+            FROM 
+                courses
+            WHERE 
+                teacher_id=:user_id AND 
+                visible=1
+            ORDER 
+                BY name"""
     result = db.session.execute(text(sql), {"user_id": user_id})
     courses = result.fetchall()
     return courses
@@ -185,3 +189,19 @@ def course_id(course_name) -> tuple | None:
     result = db.session.execute(text(sql), {"course_name": course_name})
     id = result.fetchone()[0]
     return id
+
+
+def students(course_id) -> list | None:
+    sql = """SELECT
+                U.id,
+                U.username
+            FROM 
+                enrollment E,
+                users U 
+            WHERE 
+                E.course_id=:course_id AND
+                E.student_id=U.id
+                """
+    result = db.session.execute(text(sql), {"course_id": course_id})
+    students = result.fetchall()
+    return students

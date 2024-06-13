@@ -292,20 +292,6 @@ def answer():
     abort(403)
 
 
-@app.route("/submissions/<int:course_id>/<int:exercise_id>", methods=["GET"])
-def submissions_page(course_id, exercise_id):
-    user_id = users.user_id()
-    if courses.is_enrolled(course_id, user_id):
-        # (0 id, 1 answer, 2 correct, 3 time)
-        submissions = exercises.submissions_by_student(user_id, exercise_id)
-        return render_template(
-            "submissions_page_s.html",
-            submissions=submissions,
-            course_id=course_id,
-            exercise_id=exercise_id,
-        )
-
-
 @app.route("/courses/<int:course_id>/students", methods=["GET"])
 def students(course_id):
     user_id = users.user_id()
@@ -345,15 +331,28 @@ def student_statistics(course_id, student_id):
     "/courses/<int:course_id>/students/<int:student_id>/submissions/<int:exercise_id>",
     methods=["GET"],
 )
-def student_submissions(course_id, student_id, exercise_id):
+def submissions(course_id, student_id, exercise_id):
     user_id = users.user_id()
+
     if courses.course_owner(course_id, user_id):
         # (0 id, 1 answer, 2 correct, 3 time)
         submissions = exercises.submissions_by_student(student_id, exercise_id)
         return render_template(
-            "submissions_t.html",
+            "submissions.html",
             submissions=submissions,
             course_id=course_id,
-            student_id=student_id,
             exercise_id=exercise_id,
+            student_id=student_id,
+        )
+
+    if courses.is_enrolled(course_id, user_id):
+        # (0 id, 1 answer, 2 correct, 3 time)
+        submissions = exercises.submissions_by_student(user_id, exercise_id)
+
+        return render_template(
+            "submissions.html",
+            submissions=submissions,
+            course_id=course_id,
+            exercise_id=exercise_id,
+            student_id=None,
         )

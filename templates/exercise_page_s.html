@@ -33,6 +33,6 @@
     <h4>Tehtävien palautus on päättynyt.</h4>
 {% endif %}
 
-<a href="/submissions/{{ course_id }}/{{ exercise_info.0 }}">Katso kaikki vastauksesi</a>
+<a href="/courses/{{ course_id }}/students/{{ session.user_id }}/submissions/{{ exercise_info.0 }}">Katso kaikki vastauksesi</a>
 
 {% endblock %}

@@ -6,10 +6,14 @@ is ongoing -->
 
 <p>Olet kurssin omistaja</p>
 <p>Kurssi on käynnissä. Opiskelijat voivat liittyä kurssille.</p>
+
+
+{% set message = 'Kun päätät kurssin opiskelijat eivät enää voi vastata \
+kysymyksiin. Toimenpidettä ei voi peruuttaa. Haluatko päättää kurssin?' %}
 <form action="/update_course" method="post">
     <input type="hidden" name="update_value" value="2">
     <input type="hidden" name="course_id" value="{{ course_id }}">
-    <input type="submit" value="Päätä kurssi" onclick="return confirm('Kun päätät kurssin opiskelijat eivät enää voi vastata kysymyksiin. Toimenpidettä ei voi peruuttaa. Haluatko varmasti päättää kurssin?');">
+    <input type="submit" value="Päätä kurssi" onclick="return confirm('{{ message }}');">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 

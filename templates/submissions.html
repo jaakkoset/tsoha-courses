@@ -1,7 +1,12 @@
-<!-- Page where students can see their submissions for an exercise. -->
+<!-- Shows the submissions of a student to the teacher. -->
 {% extends "layout.html" %}
 {% block content %}
+
+{% if student_id %}
+<a href="/courses/{{ course_id }}/students/{{ student_id }}">Takaisin</a>
+{% else %}
 <a href="/courses/{{ course_id }}/{{ exercise_id }}">Palaa harjoitukseen</a>
+{% endif %}
 
 {% if submissions %}
 <ol>
@@ -15,7 +20,7 @@
     {% endfor %}
 </ol>
 {% else %}
-<p><b>Et ole lähettänyt vastauksia</b></p>
+<p><b>Ei vastauksia</b></p>
 {% endif %}
 
 {% endblock %}

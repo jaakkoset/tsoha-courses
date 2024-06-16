@@ -1,11 +1,7 @@
 # Kurssisovellus
 
-Sovelluksessa opettajat voivat luoda kursseja ja tehtäviä kurseille. Opiskelijat voivat liittyä kursseille ja tehdä tehtäviä. Opiskelija näkevät tekemänsä tehtävät. Opettajat näkevät kurssinsa oppilaat ja heidän läpäisemät tehtävät. Olen ensisijaisesti ajatellut, että sovelluksella harjoiteltaisiin kieliä, mutta 
-toki sitä voi käyttää kaikenlaisiin aiheisiin.
-
-Opettajille tarjotaan työkalut tehtävien tekemiseen. Opettajat 
-pystyvät tekemään tehtäviä, joissa on kirjallinen kysymys ja erillinen 
-vastuskenttä ja lisäksi he voivat tehdä monivalintakysymyksiä. Jos ehdin, voisin myös toteuttaa tehtäviä, joissa lauseiden sisällä on tekstikenttä johon pitää täydentää oikea sana.
+Sovelluksessa opettajat voivat luoda kursseja ja tehtäviä kurseille. Opiskelijat voivat liittyä kursseille, tehdä tehtäviä ja nähdä tekemänsä tehtävät. Opettajat näkevät kurssinsa oppilaat ja heidän läpäisemät tehtävät. Opettajat pystyvät tekemään tehtäviä, joissa on kirjallinen kysymys ja erillinen 
+vastuskenttä ja lisäksi he voivat tehdä monivalintakysymyksiä.
 
 Kun uusi kurssi luodaan, se on aluksi tilassa, jossa kursille voi lisätä tehtäviä. Tällöin kurssi ei ole näkyvissä kenellekään muulle kuin kurssin opettajalle. Tämän jälkeen opettaja voi aloittaa kurssin, jolloin kurssi tulee näkyviin muille ja opiskelijat voivat liittyä kurssille ja alkaa tehdä tehtäviä. Tässä vaiheessa opettaja ei voi enää lisätä tehtäviä. Lopulta opettaja voi sulkea kurssin, jonka jälkeen kurssi ei ole enää näkyvissä muille kuin sille jo liittyneille eikä tehtävien teko ole enää mahdollista.
 

@@ -3,6 +3,7 @@ from flask import render_template, redirect, request, abort
 import users
 import courses
 import exercises
+import random
 
 
 @app.route("/")
@@ -322,28 +323,50 @@ def exercise_page(course_id, exercise_id):
         open = course_info[3]
         # Change tuple into list
         exercise_info = list(exercise_info)
-        # Don't send the answer to students
-        exercise_info.pop()
-        # [0 id, 1 course_id, 2 name, 3 type, 4 question]
-        exercise_id = exercise_info[0]
-        last_submission = exercises.last_submission(user_id, exercise_id)
-        solved = exercises.exercise_solved(user_id, exercise_id)
-        # submissions = exercises.submissions_by_student(user_id, exercise_id)
-        return render_template(
-            "exercise_page_s.html",
-            exercise_info=exercise_info,
-            course_name=course_name,
-            course_id=course_id,
-            last_submission=last_submission,
-            open=open,
-            solved=solved,
-        )
+        # exercise_id = exercise_info[0]
+
+        if exercise_info[3] == "one":
+            # Don't send the answer to students
+            # [0 id, 1 course_id, 2 name, 3 type, 4 question]
+            exercise_info.pop()
+            last_submission = exercises.last_submission(user_id, exercise_id)
+            solved = exercises.exercise_solved(user_id, exercise_id)
+            return render_template(
+                "exercise_page_s.html",
+                exercise_info=exercise_info,
+                course_name=course_name,
+                course_id=course_id,
+                last_submission=last_submission,
+                open=open,
+                solved=solved,
+            )
+
+        if exercise_info[3] == "multiple":
+            choices.append([exercise_info[5]])
+            random.shuffle(choices)
+            # Don't send the answer to students
+            # [0 id, 1 course_id, 2 name, 3 type, 4 question]
+            exercise_info.pop()
+            answered = exercises.question_answered(user_id, exercise_id)
+            solved = exercises.exercise_solved(user_id, exercise_id)
+            last_submission = exercises.last_submission(user_id, exercise_id)
+            return render_template(
+                "exercise_page_s.html",
+                exercise_info=exercise_info,
+                course_name=course_name,
+                course_id=course_id,
+                answered=answered,
+                last_submission=last_submission,
+                open=open,
+                solved=solved,
+                choices=choices,
+            )
     return "Vain kurssille liittyneet voivat nähdä kysymykset"
 
 
-# Checks the answer sent by a student.
-@app.route("/answer", methods=["POST"])
-def answer():
+# Checks the answer sent by a student to a question without choices.
+@app.route("/answer_one", methods=["POST"])
+def answer_one():
     answer = request.form["answer"]
     course_id = request.form["course_id"]
     exercise_id = request.form["exercise_id"]
@@ -355,6 +378,36 @@ def answer():
         return render_template(
             "error.html",
             message="Kurssi ei ole auki. Tehtävien palauttaminen ei ole mahdollista.",
+        )
+    if courses.is_enrolled(course_id, user_id):
+        users.check_csrf()
+        if exercises.submit(exercise_id, user_id, answer):
+            return redirect(
+                f"/courses/{course_id}/{exercise_id}",
+            )
+        return render_template("error.html", message="Palautus epäonnistui")
+    abort(403)
+
+
+# Checks the answer to a multiple choice question sent by a stude.
+@app.route("/answer_multiple", methods=["POST"])
+def answer_multiple():
+    answer = request.form["answer"]
+    course_id = request.form["course_id"]
+    exercise_id = request.form["exercise_id"]
+    user_id = users.user_id()
+    # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
+    course_info = courses.course_info(course_id)
+    open = course_info[3]
+    if open != 1:
+        return render_template(
+            "error.html",
+            message="Kurssi ei ole auki. Tehtävien palauttaminen ei ole mahdollista.",
+        )
+    if exercises.question_answered(user_id, exercise_id):
+        return render_template(
+            "error.html",
+            message="Olet jo vastannut. Uudelleen vastaaminen ei ole mahdolista",
         )
     if courses.is_enrolled(course_id, user_id):
         users.check_csrf()

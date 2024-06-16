@@ -5,34 +5,63 @@
 <h3>{{ exercise_info.2 }}</h3>
 <p>{{ exercise_info.4 }}</p>
 
-{% if solved %}
-<P><b>Olet ratkaissut tehtävän</b></P>
-{% endif %}
-
-{% if open == 1 %}
-    <h4>Anna vastaus:</h4>
-    <form action="/answer" method="POST">
-        <textarea name="answer" rows="3" cols="50"></textarea><br>
-        <input type="hidden" name="course_id" value="{{ course_id }}">
-        <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
-        <input type="submit" value="Lähetä vastaus">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    </form>
-    {% if last_submission %}
-        {% if last_submission.1 == 1 %}
-            <p><b>Vastauksesi on oikein:</b></p>
-        {% else %}
-            <p><b>Vastauksesi on väärin:</b></p>
+{% if exercise_info.3 == "one" %}
+    {% if solved %}
+    <P><b>Olet ratkaissut tehtävän</b></P>
+    {% endif %}
+    {% if open == 1 %}
+            <h4>Anna vastaus:</h4>
+            <form action="/answer_one" method="POST">
+                <textarea name="answer" rows="3" cols="50"></textarea><br>
+                <input type="hidden" name="course_id" value="{{ course_id }}">
+                <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
+                <input type="submit" value="Lähetä vastaus">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+            {% if last_submission %}
+                {% if last_submission.1 == 1 %}
+                    <p><b>Vastauksesi on oikein:</b></p>
+                {% else %}
+                    <p><b>Vastauksesi on väärin:</b></p>
+                {% endif %}
+                <p>{{ last_submission.0 }}</p>
+            {% endif %}
+    {% else %}
+        {% if not solved %}
+            <P><b>Et ratkaissut tehtävää</b></P>
         {% endif %}
-        <p>{{ last_submission.0 }}</p>
+        <h4>Tehtävien palautus on päättynyt.</h4>
     {% endif %}
-{% else %}
-    {% if not solved %}
-        <P><b>Et ratkaissut tehtävää</b></P>
-    {% endif %}
-    <h4>Tehtävien palautus on päättynyt.</h4>
+<a href="/courses/{{ course_id }}/students/{{ session.user_id }}/submissions/{{ exercise_info.0 }}">Katso kaikki vastauksesi</a>
 {% endif %}
 
-<a href="/courses/{{ course_id }}/students/{{ session.user_id }}/submissions/{{ exercise_info.0 }}">Katso kaikki vastauksesi</a>
+{% if exercise_info.3 == "multiple" %}
+    {% if open == 1 %}
+        {% if not answered %}
+            <form action="/answer_multiple" method="POST">
+                <h4>Valitse vastaus:</h4>
+                <p>
+                {% for i in range(choices| length) %}
+                    <input type="radio" name="answer" value="{{ choices[i].0 }}">{{ choices[i].0 }}
+                {% endfor %}
+                <p>
+                <input type="submit" value="Vastaa">
+                <input type="hidden" name="course_id" value="{{ course_id }}">
+                <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            </form>
+        {% endif %}
+    {% endif %}
+    {% if answered %}
+        {% if solved %}
+            <p><b>Vastasit oikein</b></p>
+        {% else %}
+            <p><b>Vastasit väärin</b></p>
+        {% endif %}
+        {{ last_submission.0 }}
+    {% endif %}
+{% endif %}
+
+
 
 {% endblock %}

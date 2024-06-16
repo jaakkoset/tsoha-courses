@@ -192,6 +192,7 @@ def last_submission(user_id, exercise_id) -> tuple | None:
     return last
 
 
+# Checks whether a student has solved an exercise
 def exercise_solved(user_id, exercise_id) -> tuple | None:
     sql = """
             SELECT 
@@ -226,3 +227,11 @@ def submissions_by_student(user_id, exercise_id) -> list | None:
     )
     submissions = result.fetchall()
     return submissions
+
+
+# Checks whether a student has answered to a multiple choice question.
+def question_answered(user_id, exercise_id) -> bool:
+    submissions = submissions_by_student(user_id, exercise_id)
+    if submissions == []:
+        return False
+    return True

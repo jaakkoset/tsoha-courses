@@ -19,18 +19,15 @@ Sovelluksessa on seuraavia ominaisuuksia.
 * Opiskelija voi nähdä mitkä tehtävät hän on tehnyt.
 * Opettaja voi luoda kurssin
 * Opettaja voi tehdä tehtäviä.
-
-Ensimmäisen välipalautuksen alla sovelluksessa ei ole seuraavia ominaisuuksia.
-
-* Opiskelija pystyy näkemään tilastosta pisteensä ja ratkaisemansa tehtävät.
+* Opiskelija pystyy näkemään ratkaisemansa tehtävät ja lähettämänsä vastaukset.
 * Opettaja voi tehdä monivalintakysymyksiä.
+* Opettaja voi nähdä kurssinsa opiskelijat ja heidän tilastonsa.
+
+Toisen välipalautuksen alla sovelluksessa ei ole seuraavia ominaisuuksia.
+
 * Opettaja voi poistaa oman kurssinsa.
 * Opettaja voi muokata tehtäviään.
-* Opettaja voi nähdä kurssinsa opiskelijat ja heidän tilastonsa.
-* Opettajan Aloita kurssi/Sulje kurssi -nappiin pitäisi laitaa jokin varmistus.
-* CSRF-tokenit
 * Paremmat hakutoiminnot
-* Kurssinimien muuttaminen toimivaan muotoon, kun niitä käytetään URL-osoitteissa (jotkin erikoismerkit kurssinimissä aiheuttavat ongelmia).
 
 ## Sovelluksen testaaminen
 

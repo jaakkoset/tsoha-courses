@@ -1,6 +1,7 @@
 <!-- Page for adding an exercise without answer choices. -->
 {% extends "layout.html" %}
 {% block content %}
+<a href="/courses/{{ course_id }}">Palaa kurssisivulle</a>
 
 <form action="/add_exercise_one/{{ course_id }}" method="POST">
     <p>
@@ -13,7 +14,7 @@
         Oikea vastaus:
         <input type="text" name="answer">
     <p>
-        <input type="submit" value="Lisää tehtävä">
+        <input type="submit" value="Luo tehtävä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 

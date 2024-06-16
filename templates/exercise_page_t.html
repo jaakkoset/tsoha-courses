@@ -7,11 +7,17 @@
 <h4>Kysymys</h4>
 <p>{{ exercise_info.4 }}</p>
 <h4>Vastaus</h4>
-<p>{{ exercise_info.6 }}</p>
+<p>{{ exercise_info.5 }}</p>
 
 {% if exercise_info.3 == "multiple" %}
-<p>Monivalintakysymyksen vaihtoehdot:</p>
-{{ exercise_info.5 }}
+<h4>Monivalintakysymyksen vaihtoehdot:</h4>
+<ol>
+    {% for choice in choices %}
+    <li>
+        <p>{{ choice.0 }}</p>
+    </li>
+    {% endfor %}
+</ol>
 {% endif %}
 
 {% endblock %}

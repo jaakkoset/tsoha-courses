@@ -184,8 +184,9 @@ def enroll(course_id):
     return render_template("error.html", message="Kurssille liittyminen epäonnistui")
 
 
-# Changes the state of a course. First from not-yet-started to ongoing and
-# then from ongoing to concluded. Changing the state cannot be reversed.
+# Changes the state of a course. First state is before the course has been started,
+# second state is when the course is ongoing and the last state is when the course has
+# been concluded. Changing the state cannot be reversed.
 @app.route("/update_course", methods=["POST"])
 def update_course():
     users.required_role([1])
@@ -204,27 +205,94 @@ def update_course():
 
 # Adds an exercise without answer choices.
 @app.route("/add_exercise_one/<int:course_id>", methods=["GET", "POST"])
-def add_exercise(course_id):
-    course_name = courses.course_info(course_id)[1]
+def add_exercise_one(course_id):
+    user_id = users.user_id()
+    if not courses.course_owner(course_id, user_id):
+        abort(403)
+
+    if request.method == "GET":
+        return render_template("add_exercise_one.html", course_id=course_id)
+
+    if request.method == "POST":
+        users.check_csrf()
+        name = request.form["name"]
+        if exercises.exercise_name_reserved(course_id, name):
+            return render_template(
+                "error.html", message="Harjoituksen nimi on jo varattu"
+            )
+        question = request.form["question"]
+        answer = request.form["answer"]
+        if exercises.add_exercise(course_id, name, "one", question, answer):
+            return redirect("/courses/" + str(course_id))
+        return render_template(
+            "error.html", message="Kysymyksen lisääminen epäonnistui"
+        )
+
+
+# Adds an multiple choice question.
+@app.route("/add_exercise_multiple/<int:course_id>", methods=["GET", "POST"])
+def add_exercise_multiple(course_id):
     user_id = users.user_id()
     if not courses.course_owner(course_id, user_id):
         abort(403)
 
     if request.method == "GET":
         return render_template(
-            "add_exercise_one.html", course_name=course_name, course_id=course_id
+            "add_exercise_multiple.html",
+            course_id=course_id,
+            nro_choices=1,
+            choices=[],
+            exercise_name="",
+            question="",
+            correct_answer="",
         )
 
     if request.method == "POST":
         users.check_csrf()
-        name = request.form["name"]
+        submit = request.form["submit"]
+        exercise_name = request.form["exercise_name"]
         question = request.form["question"]
-        answer = request.form["answer"]
-        if exercises.add_exercise(course_id, name, "one", question, answer, None):
+        correct_answer = request.form["correct_answer"]
+        nro_choices = int(request.form["nro_choices"])
+        choices = []
+        for c in range(1, nro_choices + 1):
+            name = "choice" + str(c)
+            input = request.form[name]
+            choices.append(input)
+
+        if submit == "Lisää vaihtoehto":
+            nro_choices += 1
+            choices.append("")
+            return render_template(
+                "add_exercise_multiple.html",
+                course_id=course_id,
+                nro_choices=nro_choices,
+                choices=choices,
+                exercise_name=exercise_name,
+                question=question,
+                correct_answer=correct_answer,
+            )
+
+        if submit == "Luo tehtävä":
+            if exercises.exercise_name_reserved(course_id, exercise_name):
+                return render_template(
+                    "error.html", message="Harjoituksen nimi on jo varattu"
+                )
+
+            if not exercises.add_exercise(
+                course_id, exercise_name, "multiple", question, correct_answer
+            ):
+                return render_template(
+                    "error.html", message="Harjoituksen luominen epäonnistui"
+                )
+            exercise_id = exercises.exercise_id(course_id, exercise_name)
+
+            if not exercises.add_choices(exercise_id, choices):
+                return render_template(
+                    "error.html", message="Vaihtoehtojen lisääminen epäonnistui"
+                )
+
             return redirect("/courses/" + str(course_id))
-        return render_template(
-            "error.html", message="Kysymyksen lisääminen epäonnistui"
-        )
 
 
 @app.route("/courses/<int:course_id>/<int:exercise_id>", methods=["GET"])
@@ -233,15 +301,21 @@ def exercise_page(course_id, exercise_id):
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
     user_id = users.user_id()
-    # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices, 6 answer]
+    # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 answer]
     exercise_info = exercises.exercise_info(exercise_id)
     course_name = course_info[1]
+    if exercise_info[3] == "multiple":
+        choices = exercises.exercise_choices(exercise_id)
+    else:
+        choices = None
+
     if courses.course_owner(course_id, user_id):
         return render_template(
             "exercise_page_t.html",
             exercise_info=exercise_info,
             course_name=course_name,
             course_id=course_id,
+            choices=choices,
         )
 
     if courses.is_enrolled(course_id, user_id):
@@ -250,7 +324,7 @@ def exercise_page(course_id, exercise_id):
         exercise_info = list(exercise_info)
         # Don't send the answer to students
         exercise_info.pop()
-        # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 choices]
+        # [0 id, 1 course_id, 2 name, 3 type, 4 question]
         exercise_id = exercise_info[0]
         last_submission = exercises.last_submission(user_id, exercise_id)
         solved = exercises.exercise_solved(user_id, exercise_id)

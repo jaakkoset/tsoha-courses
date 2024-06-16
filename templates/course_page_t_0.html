@@ -24,7 +24,7 @@ Haluatko aloittaa kurssin?' %}
 </form>
 <br>
 <form action="/add_exercise_multiple/{{ course_id }}" method="get">
-    <button type="submit">Monivalinta EI KÄYTÖSSÄ</button>
+    <button type="submit">Monivalinta</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 

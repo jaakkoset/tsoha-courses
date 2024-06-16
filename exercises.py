@@ -3,13 +3,15 @@ from sqlalchemy.sql import text
 import courses
 
 
-def add_exercise(course_id, name, type, question, answer, choices) -> bool:
+def add_exercise(
+    course_id: int, name: str, type: str, question: str, answer: str
+) -> bool:
     try:
         sql = """
                 INSERT INTO 
-                    exercises (course_id,name,type,question,answer,choices)
+                    exercises (course_id,name,type,question,answer)
                 VALUES
-                    (:course_id,:name,:type,:question,:answer,:choices)"""
+                    (:course_id,:name,:type,:question,:answer)"""
         db.session.execute(
             text(sql),
             {
@@ -18,13 +20,54 @@ def add_exercise(course_id, name, type, question, answer, choices) -> bool:
                 "type": type,
                 "question": question,
                 "answer": answer,
-                "choices": choices,
             },
         )
         db.session.commit()
     except:
         return False
     return True
+
+
+def add_choices(exercise_id: int, choices: list) -> bool:
+    try:
+        for choice in choices:
+            sql = """
+                    INSERT INTO 
+                        choices (exercise_id,choice)
+                    VALUES
+                        (:exercise_id,:choice)"""
+            db.session.execute(
+                text(sql),
+                {
+                    "exercise_id": exercise_id,
+                    "choice": choice,
+                },
+            )
+        db.session.commit()
+    except:
+        return False
+    return True
+
+
+def exercise_name_reserved(course_id: int, exercise_name: str) -> bool:
+    ex_id = exercise_id(course_id, exercise_name)
+    if ex_id:
+        return True
+    return False
+
+
+def exercise_id(course_id: int, exercise_name: str) -> int | None:
+    sql = """SELECT id 
+            FROM exercises
+            WHERE course_id=:course_id AND
+                name=:exercise_name"""
+    result = db.session.execute(
+        text(sql), {"course_id": course_id, "exercise_name": exercise_name}
+    )
+    id = result.fetchone()
+    if id:
+        id = id[0]
+    return id
 
 
 def course_exercises(course_id: int) -> list | None:
@@ -39,12 +82,23 @@ def course_exercises(course_id: int) -> list | None:
 
 def exercise_info(exercise_id: int) -> tuple | None:
     sql = """
-            SELECT id, course_id, name, type, question, choices, answer
+            SELECT id, course_id, name, type, question, answer
             FROM exercises
             WHERE id=:exercise_id"""
     result = db.session.execute(text(sql), {"exercise_id": exercise_id})
     data = result.fetchone()
     return data
+
+
+# returns the choices of a multiple choice question
+def exercise_choices(exercise_id) -> list | None:
+    sql = """
+            SELECT choice
+            FROM choices
+            WHERE exercise_id=:exercise_id"""
+    result = db.session.execute(text(sql), {"exercise_id": exercise_id})
+    choices = result.fetchall()
+    return choices
 
 
 def submit(exercise_id, user_id, answer) -> bool:
@@ -99,7 +153,7 @@ def submission_data(exercise_id, user_id) -> tuple | None:
     return submission
 
 
-def completed_exercises(user_id: int, course_id: list) -> dict:
+def completed_exercises(user_id: int, course_id: int) -> dict:
     sql = """
             SELECT 
                 DISTINCT(S.exercise_id),

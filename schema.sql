@@ -42,8 +42,7 @@ CREATE TABLE exercises
     name TEXT,
     type TEXT,
     question TEXT,
-    answer TEXT,
-    choices TEXT
+    answer TEXT
 );
 
 -- Contains exercise submissions by students.
@@ -56,4 +55,12 @@ CREATE TABLE submissions
     answer TEXT,
     correct INTEGER,
     time TIMESTAMP
+);
+
+-- This table contains the choices of multiple choice questions.
+CREATE TABLE choices
+(
+    id SERIAL PRIMARY KEY,
+    exercise_id INTEGER REFERENCES exercises,
+    choice TEXT
 );

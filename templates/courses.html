@@ -4,11 +4,41 @@
 
 <h3>Käynnissä olevat kurssit</h3>
 <p>Yhteensä {{ course_count }} kurssia | <a href="/my_courses">Katso omat kurssit</a></p>
-<ol>
-  {% for id, course_name, teacher_name in course_list %}
-  <li><a href="/courses/{{ id }}">{{ course_name }}, <i>{{ teacher_name }}</i></a></li>
-  <br>
-  {% endfor %}
-</ol>
+
+<form action="/courses" method="POST">
+  <p>
+    Hae kurssia nimellä:
+    <input type="text" name="course_name">
+    <button type="submit" name="search" value="1">Hae</button>
+    <input type="hidden" name="search_type" value="course_name">
+  </p>
+</form>
+
+{% if search_by_name %}
+  <form action="/courses" method="POST">
+    <button type="submit" name="page" value="1">Nollaa haku</button>
+    <input type="hidden" name="search_type" value="page">
+  </form>
+{% else %}
+  Sivu {{ page_nro }} / {{ pages }}
+  <form action="/courses" method="POST">
+    <button type="submit" name="page" value="1">Alkuun</button>
+    <button type="submit" name="page" value="{{ page_nro - 1 }}">Edellinen</button>
+    <button type="submit" name="page" value="{{ page_nro + 1 }}">Seuraava</button>
+    <button type="submit" name="page" value="{{ pages }}">Loppuun</button>
+    <input type="hidden" name="search_type" value="page">
+  </form>
+{% endif %}
+
+{% if course_list|length > 0 %}
+  <ol>
+    {% for id, course_name, teacher_name in course_list %}
+    <li><a href="/courses/{{ id }}">{{ course_name }}, <i>{{ teacher_name }}</i></a></li>
+    <br>
+    {% endfor %}
+  </ol>
+{% else %}
+  <b>Ei hakutuloksia</b>
+{% endif %}
 
 {% endblock %}

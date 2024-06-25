@@ -85,15 +85,60 @@ def create():
 
 
 # Lists all ongoing courses.
-@app.route("/courses", methods=["GET"])
+@app.route("/courses", methods=["GET", "POST"])
 def open_courses():
     users.required_role([0, 1])
-    course_list = courses.open_courses()
-    # [0 id, 1 course_name, 2 teacher_name]
-    course_count = len(course_list)
-    return render_template(
-        "courses.html", course_list=course_list, course_count=course_count
-    )
+    if request.method == "GET":
+        page_nro = 1
+        search_type = "page"
+    if request.method == "POST":
+        search_type = request.form["search_type"]
+        if search_type == "page":
+            page_nro = int(request.form["page"])
+
+    if search_type == "page":
+        course_count = courses.count_open_courses()
+        if course_count % 20 == 0:
+            pages = course_count // 20
+        else:
+            pages = course_count // 20 + 1
+
+        if page_nro < 1:
+            page_nro = 1
+        if page_nro > pages:
+            page_nro = pages
+        offset = page_nro - 1
+        offset = 20 * offset
+        # [0 id, 1 course_name, 2 teacher_name]
+        course_list = courses.open_courses(offset)
+
+        return render_template(
+            "courses.html",
+            course_list=course_list,
+            course_count=course_count,
+            page_nro=page_nro,
+            pages=pages,
+            search_by_name=False,
+        )
+
+    if search_type == "course_name":
+        course_count = courses.count_open_courses()
+        course_name = request.form["course_name"]
+        # [0 id, 1 course_name, 2 teacher_name]
+        course_list = courses.search_course_by_name(course_name)
+        page_nro = 1
+        pages = 1
+        print()
+        print("course_list:", course_list)
+        print()
+        return render_template(
+            "courses.html",
+            course_list=course_list,
+            course_count=course_count,
+            page_nro=page_nro,
+            pages=pages,
+            search_by_name=True,
+        )
 
 
 # Course page for individual courses.

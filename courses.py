@@ -34,7 +34,7 @@ def name_reserved(course_name) -> bool:
     return False
 
 
-def open_courses() -> list | None:
+def open_courses(offset) -> list | None:
     sql = """
             SELECT 
                 id,
@@ -42,8 +42,33 @@ def open_courses() -> list | None:
                 (SELECT username FROM users WHERE id=C.teacher_id) 
             FROM courses C 
             WHERE course_open=1
-            ORDER BY name"""
+            ORDER BY name
+            LIMIT 20
+            OFFSET :offset"""
+    result = db.session.execute(text(sql), {"offset": offset})
+    courses = result.fetchall()
+    return courses
+
+
+def count_open_courses() -> int:
+    sql = """
+            SELECT COUNT(id)
+            FROM courses"""
     result = db.session.execute(text(sql))
+    count = result.fetchone()[0]
+    return count
+
+
+def search_course_by_name(name) -> list | None:
+    sql = """
+            SELECT 
+                C.id, C.name, U.username
+            FROM 
+                courses C, users U
+            WHERE 
+                C.name=:name AND
+                C.teacher_id=U.id"""
+    result = db.session.execute(text(sql), {"name": name})
     courses = result.fetchall()
     return courses
 

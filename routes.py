@@ -390,6 +390,7 @@ def exercise_page(course_id, exercise_id):
     users.required_role([0, 1])
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
+    course_open = course_info[3]
     user_id = users.user_id()
     # [0 id, 1 course_id, 2 name, 3 type, 4 question, 5 answer]
     exercise_info = exercises.exercise_info(exercise_id)
@@ -405,6 +406,7 @@ def exercise_page(course_id, exercise_id):
             exercise_info=exercise_info,
             course_name=course_name,
             course_id=course_id,
+            course_open=course_open,
             choices=choices,
         )
 
@@ -572,3 +574,17 @@ def submissions(course_id, student_id, exercise_id):
             exercise_id=exercise_id,
             student_id=None,
         )
+
+
+@app.route("/delete_exercise", methods=["POST"])
+def delete_exercise():
+    exercise_id = request.form["exercise_id"]
+    course_id = request.form["course_id"]
+    user_id = users.user_id()
+    # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
+    open = courses.course_info(course_id)
+    if courses.course_owner(course_id, user_id):
+        users.check_csrf()
+        if exercises.delete_exercise(exercise_id):
+            return redirect(f"/courses/{course_id}")
+        return render_template("error.html", message="Harjoituksen poisto epäonnistui")

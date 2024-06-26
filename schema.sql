@@ -61,6 +61,6 @@ CREATE TABLE submissions
 CREATE TABLE choices
 (
     id SERIAL PRIMARY KEY,
-    exercise_id INTEGER REFERENCES exercises,
+    exercise_id INTEGER REFERENCES exercises ON DELETE CASCADE,
     choice TEXT
 );

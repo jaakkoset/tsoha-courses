@@ -235,3 +235,15 @@ def question_answered(user_id, exercise_id) -> bool:
     if submissions == []:
         return False
     return True
+
+
+def delete_exercise(exercise_id):
+    try:
+        sql = """
+            DELETE FROM exercises
+            WHERE id=:exercise_id"""
+        db.session.execute(text(sql), {"exercise_id": exercise_id})
+        db.session.commit()
+    except:
+        return False
+    return True

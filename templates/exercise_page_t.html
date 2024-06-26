@@ -10,14 +10,25 @@
 <p>{{ exercise_info.5 }}</p>
 
 {% if exercise_info.3 == "multiple" %}
-<h4>Monivalintakysymyksen vaihtoehdot:</h4>
-<ol>
-    {% for choice in choices %}
-    <li>
-        <p>{{ choice.0 }}</p>
-    </li>
-    {% endfor %}
-</ol>
+    <h4>Monivalintakysymyksen vaihtoehdot:</h4>
+    <ol>
+        {% for choice in choices %}
+        <li>
+            <p>{{ choice.0 }}</p>
+        </li>
+        {% endfor %}
+    </ol>
+{% endif %}
+
+{% if course_open == 0 %}
+    <form action="/delete_exercise" method="POST">
+        <p>
+        <button type="submit" name="delete_exercise" " >Poista tehtävä</button>
+        <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
+        <input type="hidden" name="course_id" value="{{ course_id }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </p>
+    </form>
 {% endif %}
 
 {% endblock %}

@@ -36,32 +36,35 @@
 {% endif %}
 
 {% if exercise_info.3 == "multiple" %}
-    {% if open == 1 %}
-        {% if not answered %}
-            <form action="/answer_multiple" method="POST">
-                <h4>Valitse vastaus:</h4>
-                <p>
-                {% for i in range(choices| length) %}
-                    <input type="radio" name="answer" value="{{ choices[i].0 }}">{{ choices[i].0 }}
-                {% endfor %}
-                <p>
-                <input type="submit" value="Vastaa">
-                <input type="hidden" name="course_id" value="{{ course_id }}">
-                <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            </form>
-        {% endif %}
-    {% endif %}
-    {% if answered %}
+    {% if not answered %}
+        <form action="/answer_multiple" method="POST">
+            <h4>Valitse vastaus:</h4>
+            <p>
+            {% for i in range(choices| length) %}
+                <input type="radio" name="answer" value="{{ choices[i].0 }}">{{ choices[i].0 }}
+            {% endfor %}
+            <p>
+            <input type="submit" value="Vastaa">
+            <input type="hidden" name="course_id" value="{{ course_id }}">
+            <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+    {% else %}
         {% if solved %}
             <p><b>Vastasit oikein</b></p>
         {% else %}
             <p><b>Vastasit väärin</b></p>
         {% endif %}
-        {{ last_submission.0 }}
+        <form>
+            {% for i in range(choices| length) %}
+                {% if choices[i].0 == last_submission.0 %}
+                    <input type="radio" name="answer" value="{{ choices[i].0 }}" checked>{{ choices[i].0 }}
+                {% else %}
+                    <input type="radio" name="answer" value="{{ choices[i].0 }}">{{ choices[i].0 }}
+                {% endif %}
+            {% endfor %}
+        </form>
     {% endif %}
 {% endif %}
-
-
 
 {% endblock %}

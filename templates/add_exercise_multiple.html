@@ -7,18 +7,30 @@
     <p>
         Tehtävän nimi:
         <input type="text" name="exercise_name" value="{{exercise_name}}">
+        {% if error_name %}
+            <p><b><i>{{ error_name }}</i></b></p>
+        {% endif %}
     <p>
         Tehtävän kysymys: <br>
         <textarea name="question" rows="6" cols="50">{{question}}</textarea>
+        {% if error_question %}
+            <p><b><i>{{ error_question }}</i></b></p>
+        {% endif %}
     <p>
         Oikea vastaus:
         <input type="text" name="correct_answer" value="{{correct_answer}}">
+        {% if error_answer %}
+            <p><b><i>{{ error_answer }}</i></b></p>
+        {% endif %}
     <p>
         {% for i in range(0, nro_choices) %}
             {{ i+1 }}. vaihtoehto:
             <input type="text" name="choice{{ i+1 }}" value="{{ choices[i] }}">
             <p>
         {% endfor %}
+        {% if error_choices %}
+            <p><b><i>{{ error_choices }}</i></b></p>
+        {% endif %}
     <p>
         <input type="submit" name="submit" value="Lisää vaihtoehto">
     <p>

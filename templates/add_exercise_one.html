@@ -6,13 +6,25 @@
 <form action="/add_exercise_one/{{ course_id }}" method="POST">
     <p>
         Tehtävän nimi:
-        <input type="text" name="name">
+        <input type="text" name="name" value="{{ display_name }}">
+        {% if error_name %}
+            <p><b><i>{{ error_name }}</i></b></p>
+        {% endif %}
+        {% if error_name_reserved %}
+            <p><b><i>{{ error_name_reserved }}</i></b></p>
+        {% endif %}
     <p>
         Tehtävän kysymys: <br>
-        <textarea name="question" rows="6" cols="50"></textarea>
+        <textarea name="question" rows="6" cols="50">{{ display_question }}</textarea>
+        {% if error_question %}
+            <p><b><i>{{ error_question }}</i></b></p>
+        {% endif %}
     <p>
         Oikea vastaus:
-        <input type="text" name="answer">
+        <input type="text" name="answer" value="{{ display_answer }}">
+        {% if error_answer %}
+            <p><b><i>{{ error_answer }}</i></b></p>
+        {% endif %}
     <p>
         <input type="submit" value="Luo tehtävä">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

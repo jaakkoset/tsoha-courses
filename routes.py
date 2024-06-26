@@ -299,19 +299,60 @@ def add_exercise_one(course_id):
     user_id = users.user_id()
     if not courses.course_owner(course_id, user_id):
         abort(403)
+    error_name = None
+    error_name_reserved = None
+    error_question = None
+    error_answer = None
 
     if request.method == "GET":
-        return render_template("add_exercise_one.html", course_id=course_id)
+        return render_template(
+            "add_exercise_one.html",
+            course_id=course_id,
+            error_name=error_name,
+            error_name_reserved=error_name_reserved,
+            error_question=error_question,
+            error_answer=error_answer,
+            display_name="",
+            display_question="",
+            display_answer="",
+        )
 
     if request.method == "POST":
         users.check_csrf()
         name = request.form["name"]
-        if exercises.exercise_name_reserved(course_id, name):
-            return render_template(
-                "error.html", message="Harjoituksen nimi on jo varattu"
-            )
         question = request.form["question"]
         answer = request.form["answer"]
+        error = False
+
+        if exercises.exercise_name_reserved(course_id, name):
+            error_name_reserved = "Nimi on varattu"
+            error = True
+
+        if name == "":
+            error_name = "Lisää tehtävälle nimi"
+            error = True
+        if question == "":
+            error_question = "Lisää tehtävälle kysymys"
+            error = True
+        if answer == "":
+            error_answer = "Lisää tehtävälle vastaus"
+            error = True
+        if error:
+            display_name = name
+            display_question = question
+            display_answer = answer
+            return render_template(
+                "add_exercise_one.html",
+                course_id=course_id,
+                error_name=error_name,
+                error_name_reserved=error_name_reserved,
+                error_question=error_question,
+                error_answer=error_answer,
+                display_name=display_name,
+                display_question=display_question,
+                display_answer=display_answer,
+            )
+
         if exercises.add_exercise(course_id, name, "one", question, answer):
             return redirect("/courses/" + str(course_id))
         return render_template(
@@ -339,6 +380,10 @@ def add_exercise_multiple(course_id):
 
     if request.method == "POST":
         users.check_csrf()
+        error_name = None
+        error_question = None
+        error_answer = None
+        error_choices = None
         submit = request.form["submit"]
         exercise_name = request.form["exercise_name"]
         question = request.form["question"]
@@ -348,10 +393,25 @@ def add_exercise_multiple(course_id):
         for c in range(1, nro_choices + 1):
             name = "choice" + str(c)
             input = request.form[name]
-            choices.append(input)
+            if input != "":
+                choices.append(input)
+
+        if submit == "Luo tehtävä":
+            if exercise_name == "":
+                error_name = "Lisää tehtävälle nimi"
+                submit = "Lisää vaihtoehto"
+            if question == "":
+                error_question = "Lisää tehtävälle kysymys"
+                submit = "Lisää vaihtoehto"
+            if correct_answer == "":
+                error_answer = "Lisää tehtävälle oikea vastaus"
+                submit = "Lisää vaihtoehto"
+            if len(choices) == 0:
+                error_choices = "Lisää ainakin yksi vaihtoehto"
+                submit = "Lisää vaihtoehto"
 
         if submit == "Lisää vaihtoehto":
-            nro_choices += 1
+            nro_choices = len(choices) + 1
             choices.append("")
             return render_template(
                 "add_exercise_multiple.html",
@@ -361,6 +421,10 @@ def add_exercise_multiple(course_id):
                 exercise_name=exercise_name,
                 question=question,
                 correct_answer=correct_answer,
+                error_name=error_name,
+                error_question=error_question,
+                error_answer=error_answer,
+                error_choices=error_choices,
             )
 
         if submit == "Luo tehtävä":
@@ -582,9 +646,14 @@ def delete_exercise():
     course_id = request.form["course_id"]
     user_id = users.user_id()
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
-    open = courses.course_info(course_id)
-    if courses.course_owner(course_id, user_id):
-        users.check_csrf()
-        if exercises.delete_exercise(exercise_id):
-            return redirect(f"/courses/{course_id}")
-        return render_template("error.html", message="Harjoituksen poisto epäonnistui")
+    open = courses.course_info(course_id)[3]
+    if open != 0:
+        return render_template(
+            "error.html", message="Tehtäviä ei voi poistaa kurssi aloittamisen jälkeen"
+        )
+    if not courses.course_owner(course_id, user_id):
+        abort(403)
+    users.check_csrf()
+    if exercises.delete_exercise(exercise_id):
+        return redirect(f"/courses/{course_id}")
+    return render_template("error.html", message="Harjoituksen poisto epäonnistui")

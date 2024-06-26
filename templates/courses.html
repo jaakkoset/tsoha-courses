@@ -8,8 +8,12 @@
 <form action="/courses" method="POST">
   <p>
     Hae kurssia nimellä:
-    <input type="text" name="course_name">
-    <button type="submit" name="search" value="1">Hae</button>
+    {% if searched_name == None %}
+      <input type="text" name="course_name">
+    {% else %}
+      <input type="text" name="course_name" value="{{ searched_name }}">
+    {% endif %}
+    <button type="submit" name="search">Hae</button>
     <input type="hidden" name="search_type" value="course_name">
   </p>
 </form>
@@ -23,8 +27,8 @@
   Sivu {{ page_nro }} / {{ pages }}
   <form action="/courses" method="POST">
     <button type="submit" name="page" value="1">Alkuun</button>
-    <button type="submit" name="page" value="{{ page_nro - 1 }}">Edellinen</button>
-    <button type="submit" name="page" value="{{ page_nro + 1 }}">Seuraava</button>
+    <button type="submit" name="page" value="{{ page_nro - 1 }}">Edellinen sivu</button>
+    <button type="submit" name="page" value="{{ page_nro + 1 }}">Seuraava sivu</button>
     <button type="submit" name="page" value="{{ pages }}">Loppuun</button>
     <input type="hidden" name="search_type" value="page">
   </form>

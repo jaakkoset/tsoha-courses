@@ -6,40 +6,72 @@ enrolled. Teachers see the courses they own. -->
 <h3>Omat kurssit</h3>
 <p>Yhteensä {{ course_count }} kurssia | <a href="/courses">Katso käynnissä olevat kurssit</a></p>
 
-{% if session.role == 1 %}
+<form action="/my_courses" method="POST">
+    <p>
+      Hae kurssia nimellä:
+      {% if searched_name == None %}
+        <input type="text" name="course_name">
+      {% else %}
+        <input type="text" name="course_name" value="{{ searched_name }}">
+      {% endif %}
+      <button type="submit" name="search">Hae</button>
+      <input type="hidden" name="search_type" value="course_name">
+    </p>
+</form>
 
-<ol>
-    {% for id, course_name, open in course_list %}
-    <li>
-        <p>
-            <a href="/courses/{{ id }}">{{ course_name }}</a>
-            {% if open == 0 %}
-            <br>Kurssia ei ole aloitettu
-            {% elif open == 1 %}
-            <br>Kurssi on käynnissä
-            {% elif open == 2 %}
-            <br>Kurssi on päättynyt
-            {% endif %}
-        </p>
-    </li>
-    {% endfor %}
-</ol>
-
-{% elif session.role == 0 %}
-
-<ol>
-    {% for id, course_name, open, teacher in course_list %}
-    <li>
-        <a href="/courses/{{ id }}">{{ course_name }}, <i>{{ teacher }}</i></a>
-        {% if open == 2 %}
-        Kurssi on päättynyt
-        {% endif %}
-    </li>
-    <br>
-    {% endfor %}
-</ol>
-
+{% if search_by_name %}
+    <form action="/my_courses" method="POST">
+      <button type="submit" name="page" value="1">Nollaa haku</button>
+      <input type="hidden" name="search_type" value="page">
+    </form>
+{% else %}
+    Sivu {{ page_nro }} / {{ pages }}
+    <form action="/my_courses" method="POST">
+      <button type="submit" name="page" value="1">Alkuun</button>
+      <button type="submit" name="page" value="{{ page_nro - 1 }}">Edellinen sivu</button>
+      <button type="submit" name="page" value="{{ page_nro + 1 }}">Seuraava sivu</button>
+      <button type="submit" name="page" value="{{ pages }}">Loppuun</button>
+      <input type="hidden" name="search_type" value="page">
+    </form>
 {% endif %}
 
+{% if course_list|length > 0 %}
+    {% if session.role == 1 %}
+
+        <ol>
+            {% for id, course_name, open in course_list %}
+            <li>
+                <p>
+                    <a href="/courses/{{ id }}">{{ course_name }}</a>
+                    {% if open == 0 %}
+                    <br>Kurssia ei ole aloitettu
+                    {% elif open == 1 %}
+                    <br>Kurssi on käynnissä
+                    {% elif open == 2 %}
+                    <br>Kurssi on päättynyt
+                    {% endif %}
+                </p>
+            </li>
+            {% endfor %}
+        </ol>
+
+    {% elif session.role == 0 %}
+
+        <ol>
+            {% for id, course_name, open, teacher in course_list %}
+            <li>
+                <a href="/courses/{{ id }}">{{ course_name }}, <i>{{ teacher }}</i></a>
+                {% if open == 2 %}
+                Kurssi on päättynyt
+                {% endif %}
+            </li>
+            <br>
+            {% endfor %}
+        </ol>
+
+    {% endif %}
+{% else %}
+    <b>Ei hakutuloksia</b>
+{% endif %}
 
 {% endblock %}

@@ -53,7 +53,8 @@ def open_courses(offset) -> list | None:
 def count_open_courses() -> int:
     sql = """
             SELECT COUNT(id)
-            FROM courses"""
+            FROM courses
+            WHERE course_open=1"""
     result = db.session.execute(text(sql))
     count = result.fetchone()[0]
     return count
@@ -73,7 +74,7 @@ def search_course_by_name(name) -> list | None:
     return courses
 
 
-def my_courses_teacher(user_id) -> list | None:
+def my_courses_teacher(user_id, offset) -> list | None:
     sql = """
             SELECT 
                 id,
@@ -85,13 +86,17 @@ def my_courses_teacher(user_id) -> list | None:
                 teacher_id=:user_id AND 
                 visible=1
             ORDER 
-                BY name"""
-    result = db.session.execute(text(sql), {"user_id": user_id})
+                BY name
+            LIMIT 
+                20
+            OFFSET
+                :offset"""
+    result = db.session.execute(text(sql), {"user_id": user_id, "offset": offset})
     courses = result.fetchall()
     return courses
 
 
-def my_courses_student(user_id) -> list | None:
+def my_courses_student(user_id, offset) -> list | None:
     sql = """
             SELECT 
                 C.id,
@@ -107,10 +112,67 @@ def my_courses_student(user_id) -> list | None:
                 E.course_id=C.id AND
                 C.teacher_id=U.id
             ORDER BY 
-                C.name"""
-    result = db.session.execute(text(sql), {"user_id": user_id})
+                C.name
+            LIMIT 
+                20
+            OFFSET
+                :offset"""
+    result = db.session.execute(text(sql), {"user_id": user_id, "offset": offset})
     courses = result.fetchall()
     return courses
+
+
+def search_my_course_by_name_teacher(course_name, user_id) -> list | None:
+    sql = """
+            SELECT 
+                id, name, course_open
+            FROM 
+                courses
+            WHERE 
+                name=:course_name AND
+                teacher_id=:user_id"""
+    result = db.session.execute(
+        text(sql), {"course_name": course_name, "user_id": user_id}
+    )
+    course = result.fetchall()
+    return course
+
+
+def search_my_course_by_name_student(course_name, user_id) -> list | None:
+    sql = """
+            SELECT 
+                C.id, C.name, C.teacher_id, C.course_open
+            FROM 
+                courses C, enrollment E
+            WHERE 
+                C.name=:course_name AND
+                C.id=E.course_id AND
+                E.student_id=:user_id"""
+    result = db.session.execute(
+        text(sql), {"course_name": course_name, "user_id": user_id}
+    )
+    course = result.fetchall()
+    return course
+
+
+def count_my_courses_teacher(user_id) -> int:
+    sql = """
+            SELECT COUNT(id)
+            FROM courses
+            WHERE teacher_id=:user_id"""
+    result = db.session.execute(text(sql), {"user_id": user_id})
+    count = result.fetchone()[0]
+    return count
+
+
+def count_my_courses_student(user_id) -> int:
+    sql = """
+            SELECT COUNT(id)
+            FROM enrollment
+            WHERE student_id=:user_id"""
+    result = db.session.execute(text(sql), {"user_id": user_id})
+    count = result.fetchone()[0]
+    return count
 
 
 def enroll(course_id, user_id) -> bool:

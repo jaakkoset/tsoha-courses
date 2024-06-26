@@ -39,7 +39,7 @@ def register():
             return render_template(
                 "error.html", message="Käyttäjätunnuksen tulee olla 1-30 merkkiä pitkä"
             )
-        if len(password1) < 2 or len(password1) > 30:
+        if len(password1) < 8 or len(password1) > 30:
             return render_template(
                 "error.html", message="Salasanan tulee olla 8-30 merkkiä pitkä"
             )
@@ -97,6 +97,8 @@ def open_courses():
             page_nro = int(request.form["page"])
 
     if search_type == "page":
+        search_by_name = False
+        searched_name = None
         course_count = courses.count_open_courses()
         if course_count % 20 == 0:
             pages = course_count // 20
@@ -112,33 +114,26 @@ def open_courses():
         # [0 id, 1 course_name, 2 teacher_name]
         course_list = courses.open_courses(offset)
 
-        return render_template(
-            "courses.html",
-            course_list=course_list,
-            course_count=course_count,
-            page_nro=page_nro,
-            pages=pages,
-            search_by_name=False,
-        )
-
     if search_type == "course_name":
+        search_by_name = True
+        # searched_name = request.form["searched_name"]
         course_count = courses.count_open_courses()
         course_name = request.form["course_name"]
+        searched_name = course_name
         # [0 id, 1 course_name, 2 teacher_name]
         course_list = courses.search_course_by_name(course_name)
         page_nro = 1
         pages = 1
-        print()
-        print("course_list:", course_list)
-        print()
-        return render_template(
-            "courses.html",
-            course_list=course_list,
-            course_count=course_count,
-            page_nro=page_nro,
-            pages=pages,
-            search_by_name=True,
-        )
+
+    return render_template(
+        "courses.html",
+        course_list=course_list,
+        course_count=course_count,
+        page_nro=page_nro,
+        pages=pages,
+        search_by_name=search_by_name,
+        searched_name=searched_name,
+    )
 
 
 # Course page for individual courses.
@@ -196,20 +191,69 @@ def course_page(course_id):
 
 # Page where students see the courses in which they have enrolled,
 # and teachers see the courses they own.
-@app.route("/my_courses", methods=["GET"])
+@app.route("/my_courses", methods=["GET", "POST"])
 def my_courses():
     users.required_role([0, 1])
     user_id = users.user_id()
     role = users.user_role()
+
+    if request.method == "GET":
+        page_nro = 1
+        search_type = "page"
+    if request.method == "POST":
+        search_type = request.form["search_type"]
+        if search_type == "page":
+            page_nro = int(request.form["page"])
+
     if role == 1:
-        course_list = courses.my_courses_teacher(user_id)
-        # [0 course_id, 1 course_name, 2 course_open]
+        course_count = courses.count_my_courses_teacher(user_id)
     elif role == 0:
-        course_list = courses.my_courses_student(user_id)
-        # [0 course_id, 1 course_name, 2 course_open]
-    course_count = len(course_list)
+        course_count = courses.count_my_courses_student(user_id)
+
+    if search_type == "page":
+        search_by_name = False
+        searched_name = None
+        if course_count % 20 == 0:
+            pages = course_count // 20
+        else:
+            pages = course_count // 20 + 1
+        if pages < 1:
+            pages = 1
+        if page_nro < 1:
+            page_nro = 1
+        if page_nro > pages:
+            page_nro = pages
+        offset = page_nro - 1
+        offset = 20 * offset
+        if role == 1:
+            # [0 id, 1 course_name, 2 course_open]
+            course_list = courses.my_courses_teacher(user_id, offset)
+        elif role == 0:
+            # [0 id, 1 course_name, 2 course_open, 3 teacher_name]
+            course_list = courses.my_courses_student(user_id, offset)
+
+    if search_type == "course_name":
+        search_by_name = True
+        course_name = request.form["course_name"]
+        searched_name = course_name
+        offset = 0
+        page_nro = 1
+        pages = 1
+        if role == 1:
+            # [0 id, 1 course_name, 2 course_open]
+            course_list = courses.search_my_course_by_name_teacher(course_name, user_id)
+        elif role == 0:
+            # [0 id, 1 course_name, 2 course_open, 3 teacher_name]
+            course_list = courses.search_my_course_by_name_student(course_name, user_id)
+
     return render_template(
-        "my_courses.html", course_list=course_list, course_count=course_count
+        "my_courses.html",
+        course_list=course_list,
+        course_count=course_count,
+        page_nro=page_nro,
+        pages=pages,
+        search_by_name=search_by_name,
+        searched_name=searched_name,
     )
 
 

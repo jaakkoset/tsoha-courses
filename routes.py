@@ -56,9 +56,10 @@ def register():
         if users.username_reserved(username):
             error_name_reserved = "Käyttäjätunnus on varattu"
             error = True
-        if username[0] == " " or username[-1] == " ":
-            error_spaces = "Ei välilyontejä käyttäjätunnuksen alkuun tai loppuun"
-            error = True
+        if len(username) > 0:
+            if username[0] == " " or username[-1] == " ":
+                error_spaces = "Ei välilyontejä käyttäjätunnuksen alkuun tai loppuun"
+                error = True
         if len(password1) < 8 or len(password1) > 30:
             error_password_length = "Salasanan tulee olla 8-30 merkkiä pitkä"
             error = True
@@ -86,25 +87,53 @@ def register():
 @app.route("/create", methods=["GET", "POST"])
 def create():
     users.required_role([1])
+    error_name_length = None
+    error_name_reserved = None
+    error_spaces = None
+    error_description = None
+    display_description = ""
 
     if request.method == "GET":
-        return render_template("create.html")
+        return render_template(
+            "create.html",
+            error_name_length=error_name_length,
+            error_name_reserved=error_name_reserved,
+            error_spaces=error_spaces,
+            error_description=error_description,
+            display_description=display_description,
+        )
 
     if request.method == "POST":
         users.check_csrf()
         course_name = request.form["course_name"]
         description = request.form["description"]
+        error = False
+
         if len(course_name) < 1 or len(course_name) > 50:
-            return render_template(
-                "error.html", message="Kurssin nimen tulee olla 1-50 merkkiä pitkä"
-            )
-        if len(description) < 1 or len(description) > 1000:
-            return render_template(
-                "error.html",
-                message="Kurssin kuvauksen tulee olla 1-1000 merkkiä pitkä",
-            )
+            error_name_length = "Kurssin nimen tulee olla 1-50 merkkiä pitkä"
+            error = True
         if courses.name_reserved(course_name):
-            return render_template("error.html", message="Kurssin nimi on varattu")
+            error_name_reserved = "Kurssin nimi on varattu"
+            error = True
+        if len(course_name) > 0:
+            if course_name[0] == " " or course_name[-1] == " ":
+                error_spaces = "Ei välilyöntejä nimen alkuun tai loppuun"
+                error = True
+        if len(description) < 1 or len(description) > 1000:
+            error_description = "Kurssin kuvauksen tulee olla 1-1000 merkkiä pitkä"
+            error = True
+
+        if error:
+            display_description = description
+            return render_template(
+                "create.html",
+                error_name_length=error_name_length,
+                error_name_reserved=error_name_reserved,
+                error_spaces=error_spaces,
+                error_description=error_description,
+                display_description=display_description,
+            )
+
         teacher_id = users.user_id()
         if courses.create_course(course_name, description, teacher_id):
             course_id = courses.course_id(course_name)

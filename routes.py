@@ -8,7 +8,7 @@ import random
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", error_login=None)
 
 
 @app.route("/login", methods=["POST"])
@@ -17,7 +17,8 @@ def login():
     password = request.form["password"]
     if users.login(username, password):
         return redirect("/")
-    return render_template("error.html", message="Väärä tunnus tai salasana")
+    error_login = "Väärä tunnus tai salasana"
+    return render_template("index.html", error_login=error_login)
 
 
 @app.route("/logout")
@@ -28,27 +29,54 @@ def logout():
 
 @app.route("/register", methods=["get", "post"])
 def register():
+    error_name_length = None
+    error_name_reserved = None
+    error_spaces = None
+    error_password_length = None
+    error_differing_passwords = None
+
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template(
+            "register.html",
+            error_name_length=error_name_length,
+            error_name_reserved=error_name_reserved,
+            error_spaces=error_spaces,
+            error_password_length=error_password_length,
+            error_differing_passwords=error_differing_passwords,
+        )
     if request.method == "POST":
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         role = request.form["role"]
+        error = False
         if len(username) == 0 or len(username) > 30:
-            return render_template(
-                "error.html", message="Käyttäjätunnuksen tulee olla 1-30 merkkiä pitkä"
-            )
-        if len(password1) < 8 or len(password1) > 30:
-            return render_template(
-                "error.html", message="Salasanan tulee olla 8-30 merkkiä pitkä"
-            )
+            error_name_length = "Käyttäjätunnuksen tulee olla 1-30 merkkiä pitkä"
+            error = True
         if users.username_reserved(username):
-            return render_template("error.html", message="Käyttäjätunnus on varattu")
+            error_name_reserved = "Käyttäjätunnus on varattu"
+            error = True
+        if username[0] == " " or username[-1] == " ":
+            error_spaces = "Ei välilyontejä käyttäjätunnuksen alkuun tai loppuun"
+            error = True
+        if len(password1) < 8 or len(password1) > 30:
+            error_password_length = "Salasanan tulee olla 8-30 merkkiä pitkä"
+            error = True
         if password1 != password2:
-            return render_template("error.html", message="Salasanat eroavat")
+            error_differing_passwords = "Salasanat eroavat"
+            error = True
         if role != "0" and role != "1":
             return render_template("error.html", message="Tuntematon käyttäjärooli")
+
+        if error:
+            return render_template(
+                "register.html",
+                error_name_length=error_name_length,
+                error_name_reserved=error_name_reserved,
+                error_spaces=error_spaces,
+                error_password_length=error_password_length,
+                error_differing_passwords=error_differing_passwords,
+            )
         if users.register(username, password1, role):
             return redirect("/")
         return render_template("error.html", message="Rekisteröinti ei onnistunut")

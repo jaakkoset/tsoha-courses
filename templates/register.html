@@ -2,11 +2,26 @@
 <h3>Luo uusi käyttäjä</h3>
 <form action="/register" method="post">
   Tunnus: <input type="text" name="username" />
+  {% if error_name_length %}
+    <p><b><i>{{ error_name_length }}</i></b></p>
+  {% endif %}
+  {% if error_name_reserved %}
+    <p><b><i>{{ error_name_reserved }}</i></b></p>
+  {% endif %}
+  {% if error_spaces %}
+    <p><b><i>{{ error_spaces }}</i></b></p>
+  {% endif %}
+
   <p>Salasana: <input type="password" name="password1" /></p>
-
   <p>Salasana uudestaan: <input type="password" name="password2" /></p>
-
+  {% if error_password_length %}
+    <p><b><i>{{ error_password_length }}</i></b></p>
+  {% endif %}
+  {% if error_differing_passwords %}
+    <p><b><i>{{ error_differing_passwords }}</i></b></p>
+  {% endif %}
   <p>
+    
     Käyttäjärooli:
     <select name="role">
       <option value="0">Oppilas</option>
@@ -15,7 +30,7 @@
   </p>
 
   <p>
-    <input type="submit" value="Luo tunnus" />
+    <input type="submit" value="Luo käyttäjä" />
   </p>
 </form>
 

@@ -1,10 +1,14 @@
 <!DOCTYPE html>
+<link rel="stylesheet" href="/static/main.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kurssisovellus</title>
-<h1>Kurssisovellus</h1>
-<a href="/">Etusivu</a>
+
+<br>
+<a href="/" style="text-decoration:none;"><h1>Kurssisovellus</h1></a>
+<a href="/" >Etusivu</a>
 {% if session.user_id %}
 <a href="/logout">Kirjaudu ulos</a>
 {% endif %}
-<hr />
+<hr>
 {% block content %}
 {% endblock %}

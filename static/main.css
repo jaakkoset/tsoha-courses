@@ -1,0 +1,23 @@
+body {
+    margin: auto;
+    max-width: 45em;
+    color:#3b3b3b;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    background-color: rgb(218, 255, 253);
+}
+
+h1 {
+    color: #003097;
+    display: inline;
+  }
+
+h2, h3, h4, h5 {
+    color: #000000;
+  }
+
+.title_bar {
+    width: 45em;
+    height: 9vh;
+    position: relative;
+    background-color: rgb(253, 148, 9);
+  }

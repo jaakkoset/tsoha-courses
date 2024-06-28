@@ -161,7 +161,8 @@ def open_courses():
             pages = course_count // 20
         else:
             pages = course_count // 20 + 1
-
+        if pages < 1:
+            pages = 1
         if page_nro < 1:
             page_nro = 1
         if page_nro > pages:
@@ -438,6 +439,7 @@ def add_exercise_multiple(course_id):
     if request.method == "POST":
         users.check_csrf()
         error_name = None
+        error_name_reserved = None
         error_question = None
         error_answer = None
         error_choices = None
@@ -456,6 +458,9 @@ def add_exercise_multiple(course_id):
         if submit == "Luo tehtävä":
             if exercise_name == "":
                 error_name = "Lisää tehtävälle nimi"
+                submit = "Lisää vaihtoehto"
+            if exercises.exercise_name_reserved(course_id, exercise_name):
+                error_name_reserved = "Harjoituksen nimi on varattu"
                 submit = "Lisää vaihtoehto"
             if question == "":
                 error_question = "Lisää tehtävälle kysymys"
@@ -479,6 +484,7 @@ def add_exercise_multiple(course_id):
                 question=question,
                 correct_answer=correct_answer,
                 error_name=error_name,
+                error_name_reserved=error_name_reserved,
                 error_question=error_question,
                 error_answer=error_answer,
                 error_choices=error_choices,
@@ -586,6 +592,10 @@ def answer_one():
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
     open = course_info[3]
+    if answer == "":
+        return redirect(
+            f"/courses/{course_id}/{exercise_id}",
+        )
     if open != 1:
         return render_template(
             "error.html",
@@ -604,13 +614,21 @@ def answer_one():
 # Checks the answer to a multiple choice question sent by a stude.
 @app.route("/answer_multiple", methods=["POST"])
 def answer_multiple():
-    answer = request.form["answer"]
+    error = False
+    try:
+        answer = request.form["answer"]
+    except:
+        error = True
     course_id = request.form["course_id"]
     exercise_id = request.form["exercise_id"]
     user_id = users.user_id()
     # (0 id, 1 name, 2 teacher_id, 3 course_open, 4 visible, 5 description)
     course_info = courses.course_info(course_id)
     open = course_info[3]
+    if error:
+        return redirect(
+            f"/courses/{course_id}/{exercise_id}",
+        )
     if open != 1:
         return render_template(
             "error.html",

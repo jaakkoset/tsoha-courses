@@ -10,6 +10,9 @@
         {% if error_name %}
             <p><b><i>{{ error_name }}</i></b></p>
         {% endif %}
+        {% if error_name_reserved %}
+            <p><b><i>{{ error_name_reserved }}</i></b></p>
+        {% endif %}
     <p>
         Tehtävän kysymys: <br>
         <textarea name="question" rows="6" cols="50">{{question}}</textarea>

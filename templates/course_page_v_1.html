@@ -6,15 +6,21 @@ enroll in courses.-->
 {% include "course_page_topic.html" %}
 
 {% if role == 1 %}
-<p>Opettajat eivät voi liittyä muiden kursseille</p>
+    <p>Opettajat eivät voi liittyä muiden kursseille</p>
 {% else %}
-
-<form action="/enroll/{{ course_id }}" method="post">
-    <button type="submit">Liity kurssille</button>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
-
+    <form action="/enroll/{{ course_id }}" method="post">
+        <button type="submit">Liity kurssille</button>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
 {% endif %}
 
-{% include "course_page_exercises.html" %}
+<h3>Tehtävät</h3>
+
+<ol>
+    {% for exercise_id, exercise_name in exercises %}
+    <li>
+        <p>{{ exercise_name }}</p>
+    </li>
+    {% endfor %}
+</ol>
 {% endblock %}

@@ -30,8 +30,9 @@
         {% if not solved %}
             <P><b>Et ratkaissut tehtävää</b></P>
         {% endif %}
-        <h4>Tehtävien palautus on päättynyt.</h4>
+        <p><b>Tehtävien palautus on päättynyt.</b></p>
     {% endif %}
+<br>
 <a href="/courses/{{ course_id }}/students/{{ session.user_id }}/submissions/{{ exercise_info.0 }}">Katso kaikki vastauksesi</a>
 {% endif %}
 

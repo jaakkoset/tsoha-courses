@@ -441,7 +441,8 @@ def add_exercise_multiple(course_id):
         error_name_reserved = None
         error_question = None
         error_answer = None
-        error_choices = None
+        error_no_choices = None
+        error_same_choices = None
         submit = request.form["submit"]
         exercise_name = request.form["exercise_name"]
         question = request.form["question"]
@@ -468,7 +469,10 @@ def add_exercise_multiple(course_id):
                 error_answer = "Lisää tehtävälle oikea vastaus"
                 submit = "Lisää vaihtoehto"
             if len(choices) == 0:
-                error_choices = "Lisää ainakin yksi vaihtoehto"
+                error_no_choices = "Lisää ainakin yksi vaihtoehto"
+                submit = "Lisää vaihtoehto"
+            if correct_answer in choices:
+                error_same_choices = "Sama vastaus ja vaihtoehto"
                 submit = "Lisää vaihtoehto"
 
         if submit == "Lisää vaihtoehto":
@@ -486,7 +490,8 @@ def add_exercise_multiple(course_id):
                 error_name_reserved=error_name_reserved,
                 error_question=error_question,
                 error_answer=error_answer,
-                error_choices=error_choices,
+                error_no_choices=error_no_choices,
+                error_same_choices=error_same_choices,
             )
 
         if submit == "Luo tehtävä":

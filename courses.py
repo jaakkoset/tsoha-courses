@@ -60,7 +60,7 @@ def count_open_courses() -> int:
     return count
 
 
-def search_course_by_name(name) -> list | None:
+def search_open_course_by_name(name) -> list | None:
     sql = """
             SELECT 
                 C.id, C.name, U.username
@@ -68,7 +68,8 @@ def search_course_by_name(name) -> list | None:
                 courses C, users U
             WHERE 
                 C.name=:name AND
-                C.teacher_id=U.id"""
+                C.teacher_id=U.id AND
+                C.course_open=1"""
     result = db.session.execute(text(sql), {"name": name})
     courses = result.fetchall()
     return courses
@@ -141,13 +142,14 @@ def search_my_course_by_name_teacher(course_name, user_id) -> list | None:
 def search_my_course_by_name_student(course_name, user_id) -> list | None:
     sql = """
             SELECT 
-                C.id, C.name, C.teacher_id, C.course_open
+                C.id, C.name, C.course_open, U.username
             FROM 
-                courses C, enrollment E
+                courses C, enrollment E, users U
             WHERE 
                 C.name=:course_name AND
                 C.id=E.course_id AND
-                E.student_id=:user_id"""
+                E.student_id=:user_id AND
+                C.teacher_id=U.id"""
     result = db.session.execute(
         text(sql), {"course_name": course_name, "user_id": user_id}
     )

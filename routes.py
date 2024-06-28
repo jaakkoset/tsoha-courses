@@ -174,12 +174,11 @@ def open_courses():
 
     if search_type == "course_name":
         search_by_name = True
-        # searched_name = request.form["searched_name"]
         course_count = courses.count_open_courses()
         course_name = request.form["course_name"]
         searched_name = course_name
         # [0 id, 1 course_name, 2 teacher_name]
-        course_list = courses.search_course_by_name(course_name)
+        course_list = courses.search_open_course_by_name(course_name)
         page_nro = 1
         pages = 1
 

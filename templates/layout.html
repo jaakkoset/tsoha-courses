@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="/static/main.css">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kurssisovellus</title>
-
-<br>
-<a href="/" style="text-decoration:none;"><h1>Kurssisovellus</h1></a>
-<a href="/" >Etusivu</a>
-{% if session.user_id %}
-<a href="/logout">Kirjaudu ulos</a>
-{% endif %}
+<head>
+    <link rel="stylesheet" href="/static/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kurssisovellus</title>
+</head>
+<a href="/" ><h1>Kurssisovellus</h1></a>
+<div class="navbar">
+    <a href="/" class="bar-item">Etusivu</a>
+    {% if session.user_id %}
+    <span>Olet kirjautunut nimellä <i>{{ session.username }}</i></span>
+    <a href="/logout" class="bar-item">Kirjaudu ulos</a>
+    {% endif %}
+</div>
 <hr>
 {% block content %}
 {% endblock %}

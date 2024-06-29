@@ -2,35 +2,29 @@
 {% block content %}
 
 {% if session.user_id %}
-
-<p>Olet kirjautunut nimellä {{ session.username }}</p>
-<p><a href="/my_courses">Omat kurssit</a></p>
-<p><a href="/courses">Selaa kursseja</a></p>
-
-{% if session.role == 1 %}
-<p><a href="/create">Luo uusi kurssi</a></p>
-{% endif %}
-
-{% else %}
-
-<h3>Kirjaudu sisään</h3>
-<form action="/login" method="POST">
-    <p>Tunnus:
-        <br>
-        <input type="text" name="username">
-    </p>
-    <p>Salasana:
-        <br>
-        <input type="password" name="password">
-    </p>
-    {% if error_login %}
-        <p><b><i>{{ error_login }}</i></b></p>
+    <p><a href="/my_courses">Omat kurssit</a></p>
+    <p><a href="/courses">Selaa kursseja</a></p>
+    {% if session.role == 1 %}
+        <p><a href="/create">Luo uusi kurssi</a></p>
     {% endif %}
-    <p></p><input type="submit" value="Kirjaudu">
-</form>
-</p>
-<a href="/register">Luo uusi käyttäjä</a>
-
+{% else %}
+    <h3>Kirjaudu sisään</h3>
+    <form action="/login" method="POST">
+        <p>Tunnus:
+            <br>
+            <input type="text" name="username">
+        </p>
+        <p>Salasana:
+            <br>
+            <input type="password" name="password">
+        </p>
+        {% if error_login %}
+            <p><b><i>{{ error_login }}</i></b></p>
+        {% endif %}
+        <p></p><input type="submit" value="Kirjaudu">
+    </form>
+    </p>
+    <a href="/register">Luo uusi käyttäjä</a>
 {% endif %}
 
 {% endblock %}

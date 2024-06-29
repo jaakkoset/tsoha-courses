@@ -39,16 +39,23 @@
 {% if exercise_info.3 == "multiple" %}
     {% if not answered %}
         <form action="/answer_multiple" method="POST">
-            <h4>Valitse vastaus:</h4>
+            {% if open == 1 %}
+                <h4>Valitse vastaus:</h4>
+            {% else %}
+                <b>Et vastannut kysymykseen.</b> 
+                <p><b>Vastausten palauttaminen on päättynyt.</b></p>
+            {% endif %}
             <p>
             {% for i in range(choices| length) %}
                 <input type="radio" name="answer" value="{{ choices[i].0 }}">{{ choices[i].0 }}
             {% endfor %}
             <p>
-            <input type="submit" value="Vastaa">
-            <input type="hidden" name="course_id" value="{{ course_id }}">
-            <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            {% if open == 1 %}
+                <input type="submit" value="Vastaa">
+                <input type="hidden" name="course_id" value="{{ course_id }}">
+                <input type="hidden" name="exercise_id" value="{{ exercise_info.0 }}">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            {% endif %}
         </form>
     {% else %}
         {% if solved %}

@@ -18,12 +18,12 @@ Haluatko aloittaa kurssin?' %}
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 <h3>Lisää tehtävä</h3>
-<form action="/add_exercise_one/{{ course_id }}" method="get">
+<form action="/add_exercise_one/{{ course_id }}" method="get" class="inline">
     <button type="submit">Tekstivastaus</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
-<br>
-<form action="/add_exercise_multiple/{{ course_id }}" method="get">
+
+<form action="/add_exercise_multiple/{{ course_id }}" method="get" class="inline">
     <button type="submit">Monivalinta</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>

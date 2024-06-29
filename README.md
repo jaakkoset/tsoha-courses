@@ -1,9 +1,9 @@
 # Kurssisovellus
 
-Sovelluksessa opettajat voivat luoda kursseja ja tehtäviä kurseille. Opiskelijat voivat liittyä kursseille, tehdä tehtäviä ja nähdä tekemänsä tehtävät. Opettajat näkevät kurssinsa oppilaat ja heidän läpäisemät tehtävät. Opettajat pystyvät tekemään tehtäviä, joissa on kirjallinen kysymys ja erillinen 
+Sovelluksessa opettajat voivat luoda kursseja ja tehtäviä kurseille. Opiskelijat voivat liittyä kursseille, tehdä tehtäviä ja nähdä tekemänsä tehtävät. Opettajat näkevät kurssinsa oppilaat ja heidän läpäisemänsä tehtävät. Opettajat pystyvät luomaan tehtäviä, joissa on kirjallinen kysymys ja erillinen 
 vastuskenttä ja lisäksi he voivat tehdä monivalintakysymyksiä.
 
-Kun uusi kurssi luodaan, se on aluksi tilassa, jossa kursille voi lisätä tehtäviä. Tällöin kurssi ei ole näkyvissä kenellekään muulle kuin kurssin opettajalle. Tämän jälkeen opettaja voi aloittaa kurssin, jolloin kurssi tulee näkyviin muille ja opiskelijat voivat liittyä kurssille ja alkaa tehdä tehtäviä. Tässä vaiheessa opettaja ei voi enää lisätä tehtäviä. Lopulta opettaja voi sulkea kurssin, jonka jälkeen kurssi ei ole enää näkyvissä muille kuin sille jo liittyneille eikä tehtävien teko ole enää mahdollista.
+Kun uusi kurssi luodaan, se on aluksi tilassa, jossa kursille voi lisätä tehtäviä. Tällöin kurssi ei ole näkyvissä kenellekään muulle kuin kurssin opettajalle. Tämän jälkeen opettaja voi aloittaa kurssin, jolloin kurssi tulee näkyviin muille ja opiskelijat voivat liittyä kurssille ja alkaa tehdä tehtäviä. Tässä vaiheessa opettaja ei voi enää lisätä tai poistaa tehtäviä. Lopulta opettaja voi sulkea kurssin, jonka jälkeen kurssi ei ole enää näkyvissä muille kuin sille jo liittyneille eikä tehtävien teko ole enää mahdollista. Kurssihaussa listataan kerralla 20 kurssia akkosjärjestyksessä ja lisäksi kursseja voi hakea tarkan nimihaun perusteella.
 
 Sovelluksessa on seuraavia ominaisuuksia.
 
@@ -18,14 +18,10 @@ Sovelluksessa on seuraavia ominaisuuksia.
 * Opiskelija pystyy näkemään ratkaisemansa tehtävät ja lähettämänsä vastaukset.
 * Opettaja voi tehdä monivalintakysymyksiä.
 * Opettaja voi nähdä kurssinsa opiskelijat ja heidän tilastonsa.
+* Tehtäviä voi poistaa ennen kurssin aloittamista
+* Kursseja voi hakea nimellä
 
-Toisen välipalautuksen alla sovelluksessa ei ole seuraavia ominaisuuksia.
-
-* Opettaja voi poistaa oman kurssinsa.
-* Opettaja voi muokata tehtäviään.
-* Paremmat hakutoiminnot
-
-## Sovelluksen testaaminen
+## Sovelluksen testaaminen paikallisesti
 
 Kloonaa tämä repositorio koneellesi ja siirry sen juurikansioon. Aktivoi virtuaaliympäristö komennoilla 
 

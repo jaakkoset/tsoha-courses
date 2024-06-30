@@ -8,6 +8,16 @@ primary_region = 'arn'
 
 [build]
 
+[env]
+  PORT = "5000"
+
+[[services]]
+  internal_port = 5000
+
+[[services.ports]]
+  handlers = ["http"]
+  port = 80
+  
 [http_service]
   internal_port = 5000
   force_https = true

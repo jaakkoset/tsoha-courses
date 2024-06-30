@@ -21,9 +21,9 @@ Sovelluksessa on seuraavia ominaisuuksia.
 * Tehtäviä voi poistaa ennen kurssin aloittamista
 * Kursseja voi hakea nimellä
 
-## Sovelluksen testaaminen paikallisesti
+## Sovelluksen testaaminen
 
-Kloonaa tämä repositorio koneellesi ja siirry sen juurikansioon. Aktivoi virtuaaliympäristö komennoilla 
+Sovellusta voi testata paikallisesti. Kloonaa tämä repositorio koneellesi ja siirry sen juurikansioon. Aktivoi virtuaaliympäristö komennoilla 
 
     $ python3 -m venv venv  
     $ source venv/bin/activate
